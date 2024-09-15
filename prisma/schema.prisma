@@ -12,3 +12,23 @@ datasource db {
   provider = "mysql"
   url      = env("DATABASE_URL")
 }
+
+model User {
+  id              String @id @default(cuid())
+  email           String @unique
+  full_name       String @db.VarChar(100)
+  password        String @db.VarChar(100)
+  whatsapp_number String @db.VarChar(100)
+  role            Role   @default(USER)
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  @@map("users")
+}
+
+enum Role {
+  ADMIN
+  MITRA
+  USER
+}
