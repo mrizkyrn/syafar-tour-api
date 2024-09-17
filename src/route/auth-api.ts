@@ -7,3 +7,4 @@ authApi.use(authMiddleware);
 
 authApi.get('/v1/auth/me', AuthController.me);
 authApi.post('/v1/auth/logout', AuthController.logout);
+

@@ -11,7 +11,7 @@ export const web = express();
 web.use(express.json());
 web.use(express.static('public'));
 
-web.use(cors({ origin: 'http://localhost:5173', credentials: true }));
+web.use(cors({ origin: process.env.CORS_ORIGIN, credentials: true }));
 web.use(cookieParser());
 
 web.use(publicRouter);
