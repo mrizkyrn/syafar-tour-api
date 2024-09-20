@@ -14,122 +14,70 @@ datasource db {
 }
 
 model User {
-  id              String @id @default(cuid())
-  email           String @unique
-  full_name       String @db.VarChar(100)
-  password        String @db.VarChar(100)
-  whatsapp_number String @db.VarChar(100)
-  role            Role   @default(USER)
-
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
-
-  @@map("users")
+  id              String   @id @default(cuid())
+  email           String   @unique
+  full_name       String   @db.VarChar(255)
+  password        String   @db.VarChar(255)
+  whatsapp_number String   @db.VarChar(255)
+  role            Role     @default(USER)
+  created_at      DateTime @default(now())
+  updated_at      DateTime @updatedAt
 }
 
-model Flight {
-  id    String @id @default(cuid())
-  name  String @db.VarChar(100)
-  price Int
+model ServiceType {
+  id         String        @id @default(cuid())
+  name       String        @unique @db.VarChar(255)
+  created_at DateTime      @default(now())
+  updated_at DateTime      @updatedAt
+  services   UserService[]
 
-  Calculation Calculation[]
-
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
-
-  @@map("flights")
+  @@map("service_type")
 }
 
-model HotelMekkah {
-  id    String @id @default(cuid())
-  name  String @db.VarChar(100)
-  price Int
+model UserService {
+  id              String   @id @default(cuid())
+  service_type_id String
+  service_name    String   @db.VarChar(255)
+  service_price   Decimal  @db.Decimal(10, 2)
+  created_at      DateTime @default(now())
+  updated_at      DateTime @updatedAt
 
-  Calculation Calculation[]
+  ServiceType ServiceType @relation(fields: [service_type_id], references: [id])
 
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
+  transportation Calculation[] @relation("TransportationRelation")
+  flight         Calculation[] @relation("FlightRelation")
+  hotelMekkah    Calculation[] @relation("HotelMekkahRelation")
+  hotelMadinah   Calculation[] @relation("HotelMadinahRelation")
+  muthawif       Calculation[] @relation("MuthawifRelation")
+  handling       Calculation[] @relation("HandlingRelation")
 
-  @@map("hotel_mekkah")
-}
-
-model HotelMaddinah {
-  id    String @id @default(cuid())
-  name  String @db.VarChar(100)
-  price Int
-
-  Calculation Calculation[]
-
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
-
-  @@map("hotel_maddinah")
-}
-
-model Transportation {
-  id    String @id @default(cuid())
-  name  String @db.VarChar(100)
-  price Int
-
-  Calculation Calculation[]
-
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
-
-  @@map("transportations")
-}
-
-model Muthawwif {
-  id    String @id @default(cuid())
-  name  String @db.VarChar(100)
-  price Int
-
-  Calculation Calculation[]
-
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
-
-  @@map("muthawwif")
-}
-
-model Handling {
-  id    String @id @default(cuid())
-  name  String @db.VarChar(100)
-  price Int
-
-  Calculation Calculation[]
-
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
-
-  @@map("handling")
+  @@map("user_service")
 }
 
 model Calculation {
-  id                String @id @default(cuid())
+  id                String  @id @default(cuid())
   number_of_pax     Int
   transportation_id String
   flight_id         String
   travel_duration   Int
   mekkah_duration   Int
-  maddinah_duration Int
+  madinah_duration  Int
   hotel_mekkah_id   String
-  hotel_maddinah_id String
-  muthawwif_id      String
+  hotel_madinah_id  String
+  muthawif_id       String
   handling_id       String
-  total_price       Int
+  total_price       Decimal @db.Decimal(10, 2)
+  per_pax_price     Decimal @db.Decimal(10, 2)
 
-  transportation Transportation @relation(fields: [transportation_id], references: [id])
-  flight         Flight         @relation(fields: [flight_id], references: [id])
-  hotelMekkah    HotelMekkah    @relation(fields: [hotel_mekkah_id], references: [id])
-  hotelMaddinah  HotelMaddinah  @relation(fields: [hotel_maddinah_id], references: [id])
-  muthawwif      Muthawwif      @relation(fields: [muthawwif_id], references: [id])
-  handling       Handling       @relation(fields: [handling_id], references: [id])
+  transportation UserService @relation("TransportationRelation", fields: [transportation_id], references: [id])
+  flight         UserService @relation("FlightRelation", fields: [flight_id], references: [id])
+  hotelMekkah    UserService @relation("HotelMekkahRelation", fields: [hotel_mekkah_id], references: [id])
+  hotelMadinah   UserService @relation("HotelMadinahRelation", fields: [hotel_madinah_id], references: [id])
+  muthawif       UserService @relation("MuthawifRelation", fields: [muthawif_id], references: [id])
+  handling       UserService @relation("HandlingRelation", fields: [handling_id], references: [id])
 
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
-
-  @@map("calculations")
 }
 
 enum Role {

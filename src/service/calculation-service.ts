@@ -1,12 +1,12 @@
 import { prismaClient } from '../application/database';
 import { logger } from '../application/logger';
 import { ResponseError } from '../error/response-error';
-import { toCalculationResponse } from '../model/calculation-model';
+import { CalculationResponse, CreateCalculationRequest, toCalculationResponse } from '../model/calculation-model';
 import { CalculationValidation } from '../validation/calculation-validation';
 import { Validation } from '../validation/validation';
 
 export class CalculationService {
-  static async create(request: any) {
+  static async create(request: CreateCalculationRequest): Promise<CalculationResponse> {
     const createRequest = Validation.validate(CalculationValidation.CREATE, request);
     const total_price = await this.calculateTotal(createRequest);
 
@@ -14,97 +14,95 @@ export class CalculationService {
       data: {
         ...createRequest,
         total_price,
+        per_pax_price: total_price / createRequest.number_of_pax,
       },
     });
 
-    logger.debug('record created', calculation);
-
-    return toCalculationResponse(calculation);
+    const response = await this.get(calculation.id);
+    return response;
   }
 
-  static async get(id: string) {
-    console.log(id);
+  static async get(id: string): Promise<CalculationResponse> {
     const calculation = await prismaClient.calculation.findUnique({
       where: { id },
       include: {
         transportation: {
           select: {
-            name: true,
+            service_name: true,
           },
         },
         flight: {
           select: {
-            name: true,
+            service_name: true,
           },
         },
         hotelMekkah: {
           select: {
-            name: true,
+            service_name: true,
           },
         },
-        hotelMaddinah: {
+        hotelMadinah: {
           select: {
-            name: true,
+            service_name: true,
           },
         },
-        muthawwif: {
+        muthawif: {
           select: {
-            name: true,
+            service_name: true,
           },
         },
         handling: {
           select: {
-            name: true,
+            service_name: true,
           },
         },
       },
     });
-    console.log(calculation);
+
     if (!calculation) {
       throw new ResponseError(404, 'Calculation not found');
     }
 
-    return calculation;
+    console.log(calculation);
+
+    return toCalculationResponse(calculation);
   }
 
-  static async calculateTotal(request: any) {
-    const {
-      flight_id,
-      hotel_mekkah_id,
-      hotel_maddinah_id,
-      transportation_id,
-      muthawwif_id,
-      handling_id,
-      kotaMekkah,
-      kotaMaddinah,
-    } = request;
+  static async calculateTotal(request: CreateCalculationRequest): Promise<number> {
+    const { number_of_pax, transportation_id, flight_id, travel_duration, mekkah_duration, madinah_duration, hotel_mekkah_id, hotel_madinah_id, muthawif_id, handling_id } = request;
 
-    const flightPrice = flight_id ? await prismaClient.flight.findUnique({ where: { id: flight_id } }) : null;
-    const hotelMekkahPrice = hotel_mekkah_id
-      ? await prismaClient.hotelMekkah.findUnique({ where: { id: hotel_mekkah_id } })
-      : null;
-    const hotelMaddinahPrice = hotel_maddinah_id
-      ? await prismaClient.hotelMaddinah.findUnique({ where: { id: hotel_maddinah_id } })
-      : null;
-    const transportationPrice = transportation_id
-      ? await prismaClient.transportation.findUnique({ where: { id: transportation_id } })
-      : null;
-    const muthawwifPrice = muthawwif_id
-      ? await prismaClient.muthawwif.findUnique({ where: { id: muthawwif_id } })
-      : null;
-    const handlingPrice = handling_id ? await prismaClient.handling.findUnique({ where: { id: handling_id } }) : null;
+    const transportation = await prismaClient.userService.findUnique({
+      where: { id: transportation_id },
+    });
+    const flight = await prismaClient.userService.findUnique({
+      where: { id: flight_id },
+    });
+    const hotelMekkah = await prismaClient.userService.findUnique({
+      where: { id: hotel_mekkah_id },
+    });
+    const hotelMadinah = await prismaClient.userService.findUnique({
+      where: { id: hotel_madinah_id },
+    });
+    const muthawif = await prismaClient.userService.findUnique({
+      where: { id: muthawif_id },
+    });
+    const handling = await prismaClient.userService.findUnique({
+      where: { id: handling_id },
+    });
+
+    if (!transportation || !flight || !hotelMekkah || !hotelMadinah || !muthawif || !handling) {
+      throw new ResponseError(404, 'Service not found');
+    }
 
     let totalPrice = 0;
-    totalPrice += flightPrice ? flightPrice.price : 0;
-    totalPrice += hotelMekkahPrice ? hotelMekkahPrice.price : 0;
-    totalPrice += hotelMaddinahPrice ? hotelMaddinahPrice.price : 0;
-    totalPrice += transportationPrice ? transportationPrice.price : 0;
-    totalPrice += muthawwifPrice ? muthawwifPrice.price : 0;
-    totalPrice += handlingPrice ? handlingPrice.price : 0;
-
-    totalPrice += parseInt(kotaMekkah || '0') * (hotelMekkahPrice ? hotelMekkahPrice.price : 0);
-    totalPrice += parseInt(kotaMaddinah || '0') * (hotelMaddinahPrice ? hotelMaddinahPrice.price : 0);
-
+    totalPrice += Number(transportation.service_price);
+    totalPrice += Number(flight.service_price);
+    totalPrice += Number(hotelMekkah.service_price) * mekkah_duration;
+    totalPrice += Number(hotelMadinah.service_price) * madinah_duration;
+    totalPrice += Number(muthawif.service_price);
+    totalPrice += Number(handling.service_price);
+    totalPrice *= number_of_pax;
+    
     return totalPrice;
   }
 }

@@ -1,10 +1,12 @@
 import { NextFunction, Request, Response } from 'express';
 import { CalculationService } from '../service/calculation-service';
+import { CreateCalculationRequest } from '../model/calculation-model';
 
 export class CalculationController {
   static async create (req: Request, res: Response, next: NextFunction) {
+    console.log(req.body);
     try {
-      const request = req.body;
+      const request: CreateCalculationRequest = req.body as CreateCalculationRequest;
       const response = await CalculationService.create(request);
 
       res.status(200).json({

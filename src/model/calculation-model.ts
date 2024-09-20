@@ -1,33 +1,48 @@
-import { Calculation } from '@prisma/client';
+import { Decimal } from '@prisma/client/runtime/library';
 
 export type CalculationResponse = {
    id: string;
+   number_of_pax: number;
+   transportation: string;
+   flight: string;
+   travel_duration: number;
+   mekkah_duration: number;
+   madinah_duration: number;
+   hotel_mekkah: string;
+   hotel_madinah: string;
+   muthawif: string;
+   handling: string;
+   total_price: Decimal;
+   per_pax_price: Decimal;
+};
+
+export type CreateCalculationRequest = {
    number_of_pax: number;
    transportation_id: string;
    flight_id: string;
    travel_duration: number;
    mekkah_duration: number;
-   maddinah_duration: number;
+   madinah_duration: number;
    hotel_mekkah_id: string;
-   hotel_maddinah_id: string;
-   muthawwif_id: string;
+   hotel_madinah_id: string;
+   muthawif_id: string;
    handling_id: string;
-   total_price: number;
 };
 
-export function toCalculationResponse(calculation: Calculation): CalculationResponse {
+export function toCalculationResponse(calculation: any): CalculationResponse {
    return {
       id: calculation.id,
       number_of_pax: calculation.number_of_pax,
-      transportation_id: calculation.transportation_id,
-      flight_id: calculation.flight_id,
+      transportation: calculation.transportation.service_name,
+      flight: calculation.flight.service_name,
       travel_duration: calculation.travel_duration,
       mekkah_duration: calculation.mekkah_duration,
-      maddinah_duration: calculation.maddinah_duration,
-      hotel_mekkah_id: calculation.hotel_mekkah_id,
-      hotel_maddinah_id: calculation.hotel_maddinah_id,
-      muthawwif_id: calculation.muthawwif_id,
-      handling_id: calculation.handling_id,
+      madinah_duration: calculation.madinah_duration,
+      hotel_mekkah: calculation.hotelMekkah.service_name,
+      hotel_madinah: calculation.hotelMadinah.service_name,
+      muthawif: calculation.muthawif.service_name,
+      handling: calculation.handling.service_name,
       total_price: calculation.total_price,
+      per_pax_price: calculation.per_pax_price,
    }
 }
