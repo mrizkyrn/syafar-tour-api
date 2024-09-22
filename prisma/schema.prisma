@@ -69,12 +69,12 @@ model Calculation {
   total_price       Decimal @db.Decimal(10, 2)
   per_pax_price     Decimal @db.Decimal(10, 2)
 
-  transportation UserService @relation("TransportationRelation", fields: [transportation_id], references: [id])
-  flight         UserService @relation("FlightRelation", fields: [flight_id], references: [id])
-  hotelMekkah    UserService @relation("HotelMekkahRelation", fields: [hotel_mekkah_id], references: [id])
-  hotelMadinah   UserService @relation("HotelMadinahRelation", fields: [hotel_madinah_id], references: [id])
-  muthawif       UserService @relation("MuthawifRelation", fields: [muthawif_id], references: [id])
-  handling       UserService @relation("HandlingRelation", fields: [handling_id], references: [id])
+  transportation UserService @relation("TransportationRelation", fields: [transportation_id], references: [id],  onDelete: Cascade)
+  flight         UserService @relation("FlightRelation", fields: [flight_id], references: [id], onDelete: Cascade)
+  hotelMekkah    UserService @relation("HotelMekkahRelation", fields: [hotel_mekkah_id], references: [id], onDelete: Cascade)
+  hotelMadinah   UserService @relation("HotelMadinahRelation", fields: [hotel_madinah_id], references: [id], onDelete: Cascade)
+  muthawif       UserService @relation("MuthawifRelation", fields: [muthawif_id], references: [id], onDelete: Cascade)
+  handling       UserService @relation("HandlingRelation", fields: [handling_id], references: [id], onDelete: Cascade)
 
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt

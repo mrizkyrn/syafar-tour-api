@@ -61,14 +61,24 @@ export class UserServiceService {
     return response.map((service) => toUserServiceResponse(service));
   }
 
-  static async bulkUpdate(request: BulkUpdateRequest[]) {
-    // console.log(request);
-    const bulkUpdateRequest = request.map((service) => Validation.validate(UserServiceValidation.BULK_UPDATE, service));
-    console.log('bulkUpdateRequest', bulkUpdateRequest);
+  static async bulkUpdate(request: BulkUpdateRequest): Promise<any> {
+    const { type, data } = request;
+    const newDataRequest = data.map((service) => Validation.validate(UserServiceValidation.BULK_UPDATE, service));
+
+    const serviceType = await prismaClient.serviceType.findUnique({
+      where: {
+        name: type.replace(/-/g, ' '),
+      },
+    });
+
+    if (!serviceType) {
+      throw new ResponseError(404, 'Service type not found');
+    }
+    console.log(newDataRequest);
 
     const response = await Promise.all(
-      bulkUpdateRequest.map(async (service) => {
-        const updatedService = await prismaClient.userService.update({
+      newDataRequest.map(async (service) => {
+        await prismaClient.userService.update({
           where: {
             id: service.id,
           },
@@ -76,16 +86,35 @@ export class UserServiceService {
             service_name: service.service_name,
             service_price: service.service_price,
           },
-          include: {
-            ServiceType: {
-              select: {
-                name: true,
-              },
-            },
-          },
         });
       })
     );
+
+    // const response = await Promise.all(
+    //   newDataRequest.map(async (service) => {
+    //     if (service.id) {
+    //       // Ensure the update operation is returned
+    //       return await prismaClient.userService.update({
+    //         where: {
+    //           id: service.id,
+    //         },
+    //         data: {
+    //           service_name: service.service_name,
+    //           service_price: service.service_price,
+    //         },
+    //       });
+    //     } else {
+    //       // Ensure the create operation is returned
+    //       return await prismaClient.userService.create({
+    //         data: {
+    //           service_name: service.service_name || '',
+    //           service_price: service.service_price || 0,
+    //           service_type_id: serviceType.id,
+    //         },
+    //       });
+    //     }
+    //   })
+    // );
 
     return response;
   }

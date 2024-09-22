@@ -9,5 +9,5 @@ authApi.use(authMiddleware);
 authApi.get('/v1/auth/me', AuthController.me);
 authApi.post('/v1/auth/logout', AuthController.logout);
 
-authApi.patch('/v1/user-service/bulk', UserServiceController.bulkUpdate);
+authApi.post('/v1/user-service/bulk', UserServiceController.bulkUpdate);
 authApi.get('/v1/user-service/:type', UserServiceController.getByType);

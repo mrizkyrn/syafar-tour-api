@@ -61,19 +61,19 @@ CREATE TABLE `Calculation` (
 ALTER TABLE `user_service` ADD CONSTRAINT `user_service_service_type_id_fkey` FOREIGN KEY (`service_type_id`) REFERENCES `service_type`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `Calculation` ADD CONSTRAINT `Calculation_transportation_id_fkey` FOREIGN KEY (`transportation_id`) REFERENCES `user_service`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `Calculation` ADD CONSTRAINT `Calculation_transportation_id_fkey` FOREIGN KEY (`transportation_id`) REFERENCES `user_service`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `Calculation` ADD CONSTRAINT `Calculation_flight_id_fkey` FOREIGN KEY (`flight_id`) REFERENCES `user_service`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `Calculation` ADD CONSTRAINT `Calculation_flight_id_fkey` FOREIGN KEY (`flight_id`) REFERENCES `user_service`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `Calculation` ADD CONSTRAINT `Calculation_hotel_mekkah_id_fkey` FOREIGN KEY (`hotel_mekkah_id`) REFERENCES `user_service`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `Calculation` ADD CONSTRAINT `Calculation_hotel_mekkah_id_fkey` FOREIGN KEY (`hotel_mekkah_id`) REFERENCES `user_service`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `Calculation` ADD CONSTRAINT `Calculation_hotel_madinah_id_fkey` FOREIGN KEY (`hotel_madinah_id`) REFERENCES `user_service`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `Calculation` ADD CONSTRAINT `Calculation_hotel_madinah_id_fkey` FOREIGN KEY (`hotel_madinah_id`) REFERENCES `user_service`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `Calculation` ADD CONSTRAINT `Calculation_muthawif_id_fkey` FOREIGN KEY (`muthawif_id`) REFERENCES `user_service`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `Calculation` ADD CONSTRAINT `Calculation_muthawif_id_fkey` FOREIGN KEY (`muthawif_id`) REFERENCES `user_service`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `Calculation` ADD CONSTRAINT `Calculation_handling_id_fkey` FOREIGN KEY (`handling_id`) REFERENCES `user_service`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `Calculation` ADD CONSTRAINT `Calculation_handling_id_fkey` FOREIGN KEY (`handling_id`) REFERENCES `user_service`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;

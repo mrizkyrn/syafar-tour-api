@@ -1,19 +1,19 @@
-import { Decimal } from '@prisma/client/runtime/library';
-
-
 export type UserServiceResponse = {
   id: string;
   service_type: string;
   service_name: string;
-  service_price: Decimal;
+  service_price: number;
   created_at: Date;
   updated_at: Date;
 };
 
 export type BulkUpdateRequest = {
-  id: string;
-  service_name?: string;
-  service_price?: Decimal;
+  type: string;
+  data: {
+    id: string;
+    service_name?: string;
+    service_price?: number;
+  }[];
 };
 
 export type GetByTypeRequest = {
@@ -25,7 +25,7 @@ export function toUserServiceResponse(service: any): UserServiceResponse {
     id: service.id,
     service_type: service.ServiceType.name,
     service_name: service.service_name,
-    service_price: service.service_price,
+    service_price: parseFloat(service.service_price),
     created_at: service.created_at,
     updated_at: service.updated_at,
   };
