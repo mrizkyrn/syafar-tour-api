@@ -28,32 +28,32 @@ export class CalculationService {
       include: {
         transportation: {
           select: {
-            service_name: true,
+            name: true,
           },
         },
         flight: {
           select: {
-            service_name: true,
+            name: true,
           },
         },
         hotelMekkah: {
           select: {
-            service_name: true,
+            name: true,
           },
         },
         hotelMadinah: {
           select: {
-            service_name: true,
+            name: true,
           },
         },
         muthawif: {
           select: {
-            service_name: true,
+            name: true,
           },
         },
         handling: {
           select: {
-            service_name: true,
+            name: true,
           },
         },
       },
@@ -69,7 +69,18 @@ export class CalculationService {
   }
 
   static async calculateTotal(request: CreateCalculationRequest): Promise<number> {
-    const { number_of_pax, transportation_id, flight_id, travel_duration, mekkah_duration, madinah_duration, hotel_mekkah_id, hotel_madinah_id, muthawif_id, handling_id } = request;
+    const {
+      number_of_pax,
+      transportation_id,
+      flight_id,
+      travel_duration,
+      mekkah_duration,
+      madinah_duration,
+      hotel_mekkah_id,
+      hotel_madinah_id,
+      muthawif_id,
+      handling_id,
+    } = request;
 
     const transportation = await prismaClient.userService.findUnique({
       where: { id: transportation_id },
@@ -95,14 +106,14 @@ export class CalculationService {
     }
 
     let totalPrice = 0;
-    totalPrice += Number(transportation.service_price);
-    totalPrice += Number(flight.service_price);
-    totalPrice += Number(hotelMekkah.service_price) * mekkah_duration;
-    totalPrice += Number(hotelMadinah.service_price) * madinah_duration;
-    totalPrice += Number(muthawif.service_price);
-    totalPrice += Number(handling.service_price);
+    totalPrice += Number(transportation.price);
+    totalPrice += Number(flight.price);
+    totalPrice += Number(hotelMekkah.price) * mekkah_duration;
+    totalPrice += Number(hotelMadinah.price) * madinah_duration;
+    totalPrice += Number(muthawif.price);
+    totalPrice += Number(handling.price);
     totalPrice *= number_of_pax;
-    
+
     return totalPrice;
   }
 }

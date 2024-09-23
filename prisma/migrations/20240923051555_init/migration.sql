@@ -28,8 +28,9 @@ CREATE TABLE `service_type` (
 CREATE TABLE `user_service` (
     `id` VARCHAR(191) NOT NULL,
     `service_type_id` VARCHAR(191) NOT NULL,
-    `service_name` VARCHAR(255) NOT NULL,
-    `service_price` DECIMAL(10, 2) NOT NULL,
+    `name` VARCHAR(255) NOT NULL,
+    `price` DECIMAL(10, 2) NOT NULL,
+    `order_number` INTEGER NOT NULL,
     `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updated_at` DATETIME(3) NOT NULL,
 

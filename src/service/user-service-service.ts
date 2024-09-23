@@ -19,6 +19,9 @@ export class UserServiceService {
           },
         },
       },
+      orderBy: {
+        order_number: 'asc',
+      },
     });
 
     if (!response) {
@@ -52,6 +55,9 @@ export class UserServiceService {
           },
         },
       },
+      orderBy: {
+        order_number: 'asc',
+      },
     });
 
     if (!response) {
@@ -61,9 +67,13 @@ export class UserServiceService {
     return response.map((service) => toUserServiceResponse(service));
   }
 
-  static async bulkUpdate(request: BulkUpdateRequest): Promise<any> {
-    const { type, data } = request;
-    const newDataRequest = data.map((service) => Validation.validate(UserServiceValidation.BULK_UPDATE, service));
+  static async bulkUpdate(request: BulkUpdateRequest) {
+    const { type, modifiedData, deletedData } = request;
+    const validatedModifiedData = modifiedData?.map((service) =>
+      Validation.validate(UserServiceValidation.BULK_UPDATE, service)
+    );
+
+    console.log(type, validatedModifiedData, deletedData);
 
     const serviceType = await prismaClient.serviceType.findUnique({
       where: {
@@ -74,48 +84,45 @@ export class UserServiceService {
     if (!serviceType) {
       throw new ResponseError(404, 'Service type not found');
     }
-    console.log(newDataRequest);
 
-    const response = await Promise.all(
-      newDataRequest.map(async (service) => {
-        await prismaClient.userService.update({
-          where: {
-            id: service.id,
+    // handle update and create
+    if (validatedModifiedData.length > 0) {
+      await Promise.all(
+        validatedModifiedData.map(async (service) => {
+          if (service.id) {
+            await prismaClient.userService.update({
+              where: {
+                id: service.id,
+              },
+              data: {
+                name: service.name,
+                price: service.price,
+                order_number: service.order_number,
+              },
+            });
+          } else {
+            await prismaClient.userService.createMany({
+              data: {
+                name: service.name || '',
+                price: service.price || 0,
+                service_type_id: serviceType.id,
+                order_number: service.order_number,
+              },
+            });
+          }
+        })
+      );
+    }
+
+    // handle delete
+    if (deletedData.length > 0) {
+      await prismaClient.userService.deleteMany({
+        where: {
+          id: {
+            in: deletedData,
           },
-          data: {
-            service_name: service.service_name,
-            service_price: service.service_price,
-          },
-        });
-      })
-    );
-
-    // const response = await Promise.all(
-    //   newDataRequest.map(async (service) => {
-    //     if (service.id) {
-    //       // Ensure the update operation is returned
-    //       return await prismaClient.userService.update({
-    //         where: {
-    //           id: service.id,
-    //         },
-    //         data: {
-    //           service_name: service.service_name,
-    //           service_price: service.service_price,
-    //         },
-    //       });
-    //     } else {
-    //       // Ensure the create operation is returned
-    //       return await prismaClient.userService.create({
-    //         data: {
-    //           service_name: service.service_name || '',
-    //           service_price: service.service_price || 0,
-    //           service_type_id: serviceType.id,
-    //         },
-    //       });
-    //     }
-    //   })
-    // );
-
-    return response;
+        },
+      });
+    }
   }
 }

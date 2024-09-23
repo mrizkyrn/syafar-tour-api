@@ -37,8 +37,9 @@ model ServiceType {
 model UserService {
   id              String   @id @default(cuid())
   service_type_id String
-  service_name    String   @db.VarChar(255)
-  service_price   Decimal  @db.Decimal(10, 2)
+  name            String   @db.VarChar(255)
+  price           Decimal  @db.Decimal(10, 2)
+  order_number    Int
   created_at      DateTime @default(now())
   updated_at      DateTime @updatedAt
 
@@ -69,7 +70,7 @@ model Calculation {
   total_price       Decimal @db.Decimal(10, 2)
   per_pax_price     Decimal @db.Decimal(10, 2)
 
-  transportation UserService @relation("TransportationRelation", fields: [transportation_id], references: [id],  onDelete: Cascade)
+  transportation UserService @relation("TransportationRelation", fields: [transportation_id], references: [id], onDelete: Cascade)
   flight         UserService @relation("FlightRelation", fields: [flight_id], references: [id], onDelete: Cascade)
   hotelMekkah    UserService @relation("HotelMekkahRelation", fields: [hotel_mekkah_id], references: [id], onDelete: Cascade)
   hotelMadinah   UserService @relation("HotelMadinahRelation", fields: [hotel_madinah_id], references: [id], onDelete: Cascade)

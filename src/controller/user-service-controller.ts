@@ -36,6 +36,7 @@ export class UserServiceController {
 
   static async bulkUpdate(req: Request, res: Response, next: NextFunction) {
     try {
+      console.log(req.body);
       const request: BulkUpdateRequest = req.body as BulkUpdateRequest;
       await UserServiceService.bulkUpdate(request);
 

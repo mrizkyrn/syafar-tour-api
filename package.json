@@ -8,9 +8,11 @@
     "dev": "nodemon src/main.ts",
     "build": "tsc",
     "start": "node dist/main.js",
+    "prisma-reset": "prisma migrate reset --force --skip-generate",
     "prisma-generate": "prisma generate",
     "prisma-migrate": "prisma migrate dev --name init",
-    "seed": "ts-node prisma/seed.ts"
+    "seed": "ts-node prisma/seed.ts",
+    "rebuild": "npm run prisma-reset && npm run prisma-migrate && npm run prisma-generate && npm run seed"
   },
   "author": "",
   "license": "ISC",

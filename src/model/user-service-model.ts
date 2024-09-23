@@ -1,19 +1,22 @@
 export type UserServiceResponse = {
   id: string;
   service_type: string;
-  service_name: string;
-  service_price: number;
+  name: string;
+  price: number;
+  order_number: number;
   created_at: Date;
   updated_at: Date;
 };
 
 export type BulkUpdateRequest = {
   type: string;
-  data: {
+  modifiedData: {
+    order_number: any;
     id: string;
-    service_name?: string;
-    service_price?: number;
+    name: string;
+    price: number;
   }[];
+  deletedData: string[];
 };
 
 export type GetByTypeRequest = {
@@ -24,8 +27,9 @@ export function toUserServiceResponse(service: any): UserServiceResponse {
   return {
     id: service.id,
     service_type: service.ServiceType.name,
-    service_name: service.service_name,
-    service_price: parseFloat(service.service_price),
+    name: service.name,
+    price: parseFloat(service.price),
+    order_number: service.order_number,
     created_at: service.created_at,
     updated_at: service.updated_at,
   };

@@ -24,41 +24,41 @@ const serviceTypes = [
 
 type ServiceTypes = 'TiketPesawat' | 'HotelMakkah' | 'HotelMadinah' | 'Transportasi' | 'Muthawif' | 'Handling';
 
-const serviceData: Record<ServiceTypes, Array<{ name: string; price: number }>> = {
+const serviceData: Record<ServiceTypes, Array<{ name: string; price: number; order_number?: number }>> = {
   TiketPesawat: [
-    { name: 'Tanpa Tiket Pesawat', price: 0 },
-    { name: 'Saudia Economy Class - CGK-JED', price: 5000000 },
-    { name: 'Saudia Economy Class - CGK-MED', price: 10000000 },
-    { name: 'Etihat Economy Class - CGK-JED', price: 5000000 },
-    { name: 'Indigo Economy Class - CGK-JED', price: 10000000 },
-    { name: 'Garuda Economy Class - CGK-JED', price: 15000000 },
-    { name: 'Garuda Economy Class - CGK-MED', price: 15000000 },
+    { name: 'Tanpa Tiket Pesawat', price: 0, order_number: 1 },
+    { name: 'Saudia Economy Class - CGK-JED', price: 5000000, order_number: 2 },
+    { name: 'Saudia Economy Class - CGK-MED', price: 10000000, order_number: 3 },
+    { name: 'Etihat Economy Class - CGK-JED', price: 5000000, order_number: 4 },
+    { name: 'Indigo Economy Class - CGK-JED', price: 10000000, order_number: 5 },
+    { name: 'Garuda Economy Class - CGK-JED', price: 15000000, order_number: 6 },
+    { name: 'Garuda Economy Class - CGK-MED', price: 15000000, order_number: 7 },
   ],
   HotelMakkah: [
-    { name: 'Tanpa Hotel', price: 0 },
-    { name: 'Hotel Bintang 3', price: 1000000 },
-    { name: 'Hotel Bintang 4', price: 1500000 },
-    { name: 'Hotel Bintang 5', price: 2000000 },
+    { name: 'Tanpa Hotel', price: 0, order_number: 1 },
+    { name: 'Hotel Bintang 3', price: 1000000, order_number: 2 },
+    { name: 'Hotel Bintang 4', price: 1500000, order_number: 3 },
+    { name: 'Hotel Bintang 5', price: 2000000, order_number: 4 },
   ],
   HotelMadinah: [
-    { name: 'Tanpa Hotel', price: 0 },
-    { name: 'Hotel Bintang 3', price: 800000 },
-    { name: 'Hotel Bintang 4', price: 1200000 },
-    { name: 'Hotel Bintang 5', price: 1600000 },
+    { name: 'Tanpa Hotel', price: 0, order_number: 1 },
+    { name: 'Hotel Bintang 3', price: 800000, order_number: 2 },
+    { name: 'Hotel Bintang 4', price: 1200000, order_number: 3 },
+    { name: 'Hotel Bintang 5', price: 1600000, order_number: 4 },
   ],
   Transportasi: [
-    { name: 'Tanpa Transportasi', price: 0 },
-    { name: 'Dengan Transportasi', price: 500000 },
+    { name: 'Tanpa Transportasi', price: 0, order_number: 1 },
+    { name: 'Dengan Transportasi', price: 500000, order_number: 2 },
   ],
   Muthawif: [
-    { name: 'Tanpa Muthawwif', price: 0 },
-    { name: 'Muthawwif 4D', price: 500000 },
-    { name: 'Full Muthawwif', price: 1000000 },
+    { name: 'Tanpa Muthawwif', price: 0, order_number: 1 },
+    { name: 'Muthawwif 4D', price: 500000, order_number: 2 },
+    { name: 'Full Muthawwif', price: 1000000, order_number: 3 },
   ],
   Handling: [
-    { name: 'Tanpa Handling', price: 0 },
-    { name: 'Handling', price: 500000 },
-    { name: 'Full Handling', price: 1000000 },
+    { name: 'Tanpa Handling', price: 0, order_number: 1 },
+    { name: 'Handling', price: 500000, order_number: 2 },
+    { name: 'Full Handling', price: 1000000, order_number: 3 },
   ],
 };
 
@@ -102,7 +102,7 @@ async function createServiceTypesAndServices() {
     for (const service of services) {
       const existingService = await prisma.userService.findFirst({
         where: {
-          service_name: service.name,
+          name: service.name,
           service_type_id: serviceType.id,
         },
       });
@@ -110,9 +110,10 @@ async function createServiceTypesAndServices() {
       if (!existingService) {
         await prisma.userService.create({
           data: {
-            service_name: service.name,
-            service_price: service.price,
+            name: service.name,
+            price: service.price,
             service_type_id: serviceType.id,
+            order_number: service.order_number || 0,
           },
         });
         console.log(`Service '${service.name}' under '${serviceType.name}' created`);
