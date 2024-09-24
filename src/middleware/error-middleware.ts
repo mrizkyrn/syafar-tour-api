@@ -6,7 +6,7 @@ export const errorMiddleware = async (error: Error, req: Request, res: Response,
    if (error instanceof ZodError) {
       res.status(400).json({
          success: false,
-         message:  error.errors[0].message,
+         message: `${error.errors[0].message}: ${error.errors[0].path.join('.')}`,
       });
    } else if (error instanceof ResponseError) {
       res.status(error.status).json({

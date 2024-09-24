@@ -62,6 +62,12 @@ const serviceData: Record<ServiceTypes, Array<{ name: string; price: number; ord
   ],
 };
 
+const CategoryData = [
+  { name: 'Paket Umroh', has_variation: true },
+  { name: 'Visa Umroh', has_variation: false },
+  { name: 'Paket Hotel', has_variation: true },
+];
+
 async function createAdminUser() {
   const existingAdmin = await prisma.user.findFirst({
     where: { email: adminData.email },
@@ -124,11 +130,33 @@ async function createServiceTypesAndServices() {
   }
 }
 
+async function createCategories() {
+  for (const category of CategoryData) {
+    const existingCategory = await prisma.category.findFirst({
+      where: { name: category.name },
+    });
+
+    if (!existingCategory) {
+      await prisma.category.create({
+        data: {
+          name: category.name,
+          has_variation: category.has_variation,
+        },
+      });
+
+      console.log(`Category '${category.name}' created`);
+    } else {
+      console.log(`Category '${category.name}' already exists`);
+    }
+  }
+}
+
 async function main() {
   try {
     console.log('Starting seeding process...');
     await createAdminUser();
     await createServiceTypesAndServices();
+    await createCategories();
     console.log('Seeding completed successfully.');
   } catch (error) {
     console.error('Error during seeding:', error);

@@ -81,6 +81,94 @@ model Calculation {
   updated_at DateTime @updatedAt
 }
 
+model Category {
+  id            String   @id @default(cuid())
+  name          String   @db.VarChar(255)
+  has_variation Boolean  @default(false)
+  created_at    DateTime @default(now())
+  updated_at    DateTime @updatedAt
+
+  ProductCategories ProductCategory[]
+}
+
+model Product {
+  id          String   @id @default(cuid())
+  thumbnail   String   @db.VarChar(255)
+  name        String   @db.VarChar(255)
+  description String   @db.Text
+  price       Decimal  @db.Decimal(10, 2)
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+
+  ProductCategories ProductCategory[]
+  ProductVariations ProductVariation[]
+  ProductImages     ProductImage[]
+  ProductInclude    ProductInclude[]
+  ProductExclude    ProductExclude[]
+}
+
+model ProductCategory {
+  id          String   @id @default(cuid())
+  product_id  String
+  category_id String
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+
+  Product  Product  @relation(fields: [product_id], references: [id], onDelete: Cascade)
+  Category Category @relation(fields: [category_id], references: [id], onDelete: Cascade)
+
+  @@map("product_category")
+}
+
+model ProductVariation {
+  id         String   @id @default(cuid())
+  product_id String
+  name       String   @default("Room") @db.VarChar(255)
+  price      Decimal  @db.Decimal(10, 2)
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  Product Product @relation(fields: [product_id], references: [id], onDelete: Cascade)
+
+  @@map("product_variation")
+}
+
+model ProductInclude {
+  id         String   @id @default(cuid())
+  product_id String
+  point      String   @db.VarChar(255)
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  Product Product @relation(fields: [product_id], references: [id], onDelete: Cascade)
+
+  @@map("product_include")
+}
+
+model ProductExclude {
+  id         String   @id @default(cuid())
+  product_id String
+  point      String   @db.VarChar(255)
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  Product Product @relation(fields: [product_id], references: [id], onDelete: Cascade)
+
+  @@map("product_exclude")
+}
+
+model ProductImage {
+  id         String   @id @default(cuid())
+  product_id String
+  image_url  String   @db.VarChar(255)
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  Product Product @relation(fields: [product_id], references: [id], onDelete: Cascade)
+
+  @@map("product_image")
+}
+
 enum Role {
   ADMIN
   MITRA
