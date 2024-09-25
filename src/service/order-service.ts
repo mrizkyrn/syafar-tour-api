@@ -7,11 +7,13 @@ import { User } from '@prisma/client';
 
 export class OrderService {
   static async create(user: User, request: CreateOrderRequest): Promise<OrderResponse> {
+    console.log(request);
     const createRequest = Validation.validate(OrderValidation.CREATE, request);
 
     const response = await prismaClient.order.create({
       data: {
         user_id: user.id,
+        variation: createRequest.variation || '',
         ...createRequest,
         },
       });

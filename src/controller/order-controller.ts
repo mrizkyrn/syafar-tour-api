@@ -5,7 +5,6 @@ import { UserRequest } from '../type/user-request';
 
 export class OrderController {
   static async create(req: UserRequest, res: Response, next: NextFunction) {
-    console.log(req.body, req.user);
     try {
       const request: CreateOrderRequest = req.body as CreateOrderRequest;
       const response = await OrderService.create(req.user, request);

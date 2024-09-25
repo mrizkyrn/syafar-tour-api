@@ -26,7 +26,7 @@ authApi.put('/v1/category/:id', permit('ADMIN'), CategoryController.update);
 authApi.delete('/v1/category/:id', permit('ADMIN'), CategoryController.delete);
 
 authApi.post('/v1/product', permit('ADMIN'), upload.fields([{ name: 'thumbnail', maxCount: 1 }, { name: 'images', maxCount: 5 }]), ProductController.create);
-authApi.patch('/v1/product/:id', permit('ADMIN'), ProductController.update);
+authApi.patch('/v1/product/:id', permit('ADMIN'), upload.fields([{ name: 'thumbnail', maxCount: 1 }, { name: 'images', maxCount: 5 }]), ProductController.update);
 authApi.delete('/v1/product/:id', permit('ADMIN'), ProductController.delete);
 
 authApi.get('/v1/order', permit('ADMIN'), OrderController.getAll);

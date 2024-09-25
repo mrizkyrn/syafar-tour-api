@@ -19,14 +19,14 @@ export class ProductController {
           variation.price = parseFloat(variation.price);
         });
       }
-      
+
       const request: CreateProductRequest = {
         ...req.body,
         price: parseFloat(req.body.price),
         thumbnail: thumbnailFile ? `/public/uploads/${thumbnailFile.filename}` : '',
         images: imageFiles.map((file) => `/public/uploads/${file.filename}`),
       };
-      
+
       const response = await ProductService.create(request);
 
       res.status(201).json({
@@ -69,9 +69,35 @@ export class ProductController {
   }
 
   static async update(req: Request, res: Response, next: NextFunction) {
-    console.log(req.body);
     try {
       const id = req.params.id;
+
+      if (req.files) {
+        const files = req.files as { [fieldname: string]: Express.Multer.File[] };
+      
+        // Check if thumbnail exists before updating
+        const thumbnailFile = files['thumbnail'] ? files['thumbnail'][0] : null;
+        if (thumbnailFile) {
+          req.body.thumbnail = `/public/uploads/${thumbnailFile.filename}`;
+        }
+      
+        // Check if images exist before updating
+        const imageFiles = files['images'] || [];
+        if (imageFiles.length > 0) {
+          req.body.images = imageFiles.map((file) => `/public/uploads/${file.filename}`);
+        }
+      }
+
+      if (req.body.variations) {
+        req.body.variations.forEach((variation: any) => {
+          variation.price = parseFloat(variation.price);
+        });
+      }
+
+      if (req.body.price) {
+        req.body.price = parseFloat(req.body.price);
+      }
+
       const request: UpdateProductRequest = req.body as UpdateProductRequest;
       const response = await ProductService.update(id, request);
 

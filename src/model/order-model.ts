@@ -26,7 +26,7 @@ export type OrderResponse = {
 
 export type CreateOrderRequest = {
   product_id: string;
-  variation: string;
+  variation?: string;
   departure: Date;
   number_of_pax: number;
   per_pax_price: number;

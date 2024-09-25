@@ -1,4 +1,4 @@
-import { Product } from "@prisma/client";
+import { Product } from '@prisma/client';
 
 export type ProductResponse = {
   id: string;
@@ -6,7 +6,7 @@ export type ProductResponse = {
   name: string;
   description: string;
   price: number;
-  categories: string[];
+  categories: Category[];
   variations?: Variation[];
   images?: string[];
   includes?: string[];
@@ -20,7 +20,7 @@ export type CreateProductRequest = {
   name: string;
   description: string;
   price: number;
-  category_ids: string[]
+  category_ids: string[];
   variations?: Variation[];
   images?: string[];
   includes?: string[];
@@ -39,20 +39,16 @@ export type UpdateProductRequest = {
   excludes?: string[];
 };
 
+type Category = {
+  id: string;
+  name: string;
+};
+
 type Variation = {
-  
+  id: string;
   name: string;
   price: number;
 };
-
-type includeExclude = {
-  point: string;
-};
-
-type ProductImage = {
-  image_url: string;
-};
-
 
 export function toProductResponse(product: any): ProductResponse {
   return {
@@ -61,14 +57,20 @@ export function toProductResponse(product: any): ProductResponse {
     name: product.name,
     description: product.description,
     price: parseFloat(product.price),
-    categories: product.ProductCategories?.map((cat: any) => cat.Category.name) || [], // Maps category names
-    variations: product.ProductVariations?.map((variation: any) => ({
-      name: variation.name,
-      price: variation.price,
-    })) || [], // Maps variations, empty array if none
-    images: product.ProductImages?.map((image: any) => image.image_url) || [], // Maps image URLs
-    includes: product.ProductInclude?.map((include: any) => include.point) || [], // Maps include points
-    excludes: product.ProductExclude?.map((exclude: any) => exclude.point) || [], // Maps exclude points
+    categories:
+      product.ProductCategories?.map((productCategory: any) => ({
+        id: productCategory.Category.id,
+        name: productCategory.Category.name,
+      })) || [],
+    variations:
+      product.ProductVariations?.map((variation: Variation) => ({
+        id: variation.id,
+        name: variation.name,
+        price: variation.price,
+      })) || [],
+    images: product.ProductImages?.map((image: any) => image.image_url) || [],
+    includes: product.ProductInclude?.map((include: any) => include.point) || [],
+    excludes: product.ProductExclude?.map((exclude: any) => exclude.point) || [],
     created_at: product.created_at,
     updated_at: product.updated_at,
   };
