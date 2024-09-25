@@ -40,6 +40,7 @@ export type UpdateProductRequest = {
 };
 
 type Variation = {
+  
   name: string;
   price: number;
 };

@@ -5,6 +5,7 @@ import { AuthController } from '../controller/auth-controller';
 import { UserServiceController } from '../controller/user-service-controller';
 import { CategoryController } from '../controller/category-controller';
 import { ProductController } from '../controller/product-controller';
+import { OrderController } from '../controller/order-controller';
 import { upload } from '../middleware/multer-middleware';
 
 
@@ -25,7 +26,9 @@ authApi.put('/v1/category/:id', permit('ADMIN'), CategoryController.update);
 authApi.delete('/v1/category/:id', permit('ADMIN'), CategoryController.delete);
 
 authApi.post('/v1/product', permit('ADMIN'), upload.fields([{ name: 'thumbnail', maxCount: 1 }, { name: 'images', maxCount: 5 }]), ProductController.create);
-authApi.get('/v1/product', ProductController.getAll);
-authApi.get('/v1/product/:id', ProductController.get);
 authApi.patch('/v1/product/:id', permit('ADMIN'), ProductController.update);
 authApi.delete('/v1/product/:id', permit('ADMIN'), ProductController.delete);
+
+authApi.get('/v1/order', permit('ADMIN'), OrderController.getAll);
+authApi.get('/v1/order/:id', OrderController.get);
+authApi.post('/v1/order', OrderController.create);

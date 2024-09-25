@@ -22,6 +22,8 @@ model User {
   role            Role     @default(USER)
   created_at      DateTime @default(now())
   updated_at      DateTime @updatedAt
+
+  Order Order[]
 }
 
 model ServiceType {
@@ -105,6 +107,7 @@ model Product {
   ProductImages     ProductImage[]
   ProductInclude    ProductInclude[]
   ProductExclude    ProductExclude[]
+  Order             Order[]
 }
 
 model ProductCategory {
@@ -167,6 +170,22 @@ model ProductImage {
   Product Product @relation(fields: [product_id], references: [id], onDelete: Cascade)
 
   @@map("product_image")
+}
+
+model Order {
+  id            String   @id @default(cuid())
+  user_id       String
+  product_id    String
+  variation     String
+  departure     DateTime @db.Date
+  number_of_pax Int
+  per_pax_price Decimal  @db.Decimal(10, 2)
+  total_price   Decimal  @db.Decimal(10, 2)
+  created_at    DateTime @default(now())
+  updated_at    DateTime @updatedAt
+
+  User    User    @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  Product Product @relation(fields: [product_id], references: [id], onDelete: Cascade)
 }
 
 enum Role {
