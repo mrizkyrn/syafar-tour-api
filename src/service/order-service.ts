@@ -15,16 +15,32 @@ export class OrderService {
         user_id: user.id,
         variation: createRequest.variation || '',
         ...createRequest,
-        },
-      });
+      },
+    });
 
     return await this.get(response.id);
   }
 
-  static async getAll(): Promise<OrderResponse[]> {
-    const response = await prismaClient.order.findMany();
+  static async getAll(): Promise<any[]> {
+    // include user data only get full_name and include product data only get name
+    const response = await prismaClient.order.findMany({
+      include: {
+        User: {
+          select: {
+            full_name: true,
+            email: true,
+            whatsapp_number: true,
+          },
+        },
+        Product: {
+          select: {
+            name: true,
+          },
+        },
+      },
+    });
 
-    return response.map((order) => toOrderResponse(order));
+    return response;
   }
 
   static async get(id: string): Promise<OrderResponse> {

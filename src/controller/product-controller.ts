@@ -5,13 +5,14 @@ import { CreateProductRequest, UpdateProductRequest } from '../model/product-mod
 export class ProductController {
   static async create(req: Request, res: Response, next: NextFunction) {
     try {
-      if (!req.files) {
-        throw new Error('No files uploaded');
-      }
+      let thumbnailPath = '/public/uploads/default-thumbnail.png';
+      if (req.files && 'thumbnail' in req.files) {
+        const files = req.files as { [fieldname: string]: Express.Multer.File[] };
+        const thumbnailFile = files['thumbnail'] ? files['thumbnail'][0] : null;
+        const imageFiles = files['images'] || [];
 
-      const files = req.files as { [fieldname: string]: Express.Multer.File[] };
-      const thumbnailFile = files['thumbnail'] ? files['thumbnail'][0] : null;
-      const imageFiles = files['images'] || [];
+        thumbnailPath = thumbnailFile ? `/public/uploads/${thumbnailFile.filename}` : thumbnailPath;
+      }
 
       const variations = req.body.variations;
       if (variations) {
@@ -23,8 +24,7 @@ export class ProductController {
       const request: CreateProductRequest = {
         ...req.body,
         price: parseFloat(req.body.price),
-        thumbnail: thumbnailFile ? `/public/uploads/${thumbnailFile.filename}` : '',
-        images: imageFiles.map((file) => `/public/uploads/${file.filename}`),
+        thumbnail: thumbnailPath,
       };
 
       const response = await ProductService.create(request);
@@ -74,13 +74,13 @@ export class ProductController {
 
       if (req.files) {
         const files = req.files as { [fieldname: string]: Express.Multer.File[] };
-      
+
         // Check if thumbnail exists before updating
         const thumbnailFile = files['thumbnail'] ? files['thumbnail'][0] : null;
         if (thumbnailFile) {
           req.body.thumbnail = `/public/uploads/${thumbnailFile.filename}`;
         }
-      
+
         // Check if images exist before updating
         const imageFiles = files['images'] || [];
         if (imageFiles.length > 0) {

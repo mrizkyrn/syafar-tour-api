@@ -20,8 +20,7 @@ authApi.post('/v1/user-service/bulk', permit('ADMIN'), UserServiceController.bul
 authApi.get('/v1/user-service/:type', UserServiceController.getByType);
 
 authApi.post('/v1/category', permit('ADMIN'), CategoryController.create);
-authApi.get('/v1/category', permit('ADMIN'), CategoryController.getAll);
-authApi.get('/v1/category/:id', permit('ADMIN'), CategoryController.get);
+
 authApi.put('/v1/category/:id', permit('ADMIN'), CategoryController.update);
 authApi.delete('/v1/category/:id', permit('ADMIN'), CategoryController.delete);
 
