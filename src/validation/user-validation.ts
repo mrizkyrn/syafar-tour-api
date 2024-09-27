@@ -8,6 +8,6 @@ export class UserValidation {
   });
   static readonly UPDATE_PASSWORD: ZodType = z.object({
     old_password: z.string().max(100),
-    new_password: z.string().min(6).max(100),
+    new_password: z.string().min(6, 'Password minimal 6 karakter').max(100, 'Password maksimal 100 karakter'),
   });
 }

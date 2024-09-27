@@ -1,7 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import { RegisterUserRequest, LoginUserRequest } from '../model/user-model';
 import { AuthService } from '../service/auth-service';
-import { UserRequest } from '../type/user-request';
 
 export class AuthController {
   static async register(req: Request, res: Response, next: NextFunction) {
@@ -11,7 +10,7 @@ export class AuthController {
 
       res.status(201).json({
         success: true,
-        message: 'User registered successfully',
+        message: 'Registrasi berhasil',
         data: response,
       });
     } catch (error) {
@@ -32,7 +31,7 @@ export class AuthController {
 
       res.status(200).json({
         success: true,
-        message: 'User logged in successfully',
+        message: 'Login berhasil',
         data: response,
       });
     } catch (error) {
@@ -46,7 +45,7 @@ export class AuthController {
 
       res.status(200).json({
         success: true,
-        message: 'User logged out successfully',
+        message: 'Logout berhasil',
       });
     } catch (error) {
       next(error);
