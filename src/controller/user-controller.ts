@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
 import { UserService } from '../service/user-service';
 import { Role } from '@prisma/client';
-import { UpdateUserRequest } from '../model/user-model';
+import { UpdateUserRequest, UpdatePasswordRequest } from '../model/user-model';
 import { UserRequest } from '../type/user-request';
 
 export class UserController {
@@ -71,6 +71,36 @@ export class UserController {
         secure: true,
         sameSite: 'none',
       });
+
+      res.status(200).json({
+        success: true,
+        message: 'User updated successfully',
+        data: response,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async updateCurrentPassword(req: UserRequest, res: Response, next: NextFunction) {
+    try {
+      const request = req.body as UpdatePasswordRequest;
+      await UserService.updateCurrentPassword(req.user, request);
+
+      res.status(200).json({
+        success: true,
+        message: 'Password updated successfully',
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async update(req: Request, res: Response, next: NextFunction) {
+    try {
+      const id = req.params.id;
+      const request: UpdateUserRequest = req.body as UpdateUserRequest;
+      const response = await UserService.update(id, request);
 
       res.status(200).json({
         success: true,

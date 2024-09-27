@@ -1,9 +1,10 @@
 import jwt from 'jsonwebtoken';
+import bcrypt from 'bcrypt';
 
 import { prismaClient } from '../application/database';
 import { Role, User } from '@prisma/client';
 import { ResponseError } from '../error/response-error';
-import { UserResponse, toUserResponse, UpdateUserRequest } from '../model/user-model';
+import { UserResponse, toUserResponse, UpdateUserRequest, UpdatePasswordRequest } from '../model/user-model';
 import { Validation } from '../validation/validation';
 import { UserValidation } from '../validation/user-validation';
 
@@ -74,6 +75,63 @@ export class UserService {
     const response = toUserResponse(user);
     response.token = token;
     return response;
+  }
+
+  static async updateCurrentPassword(user: User, request: UpdatePasswordRequest): Promise<UserResponse> {
+    const updatePasswordRequest = Validation.validate(UserValidation.UPDATE_PASSWORD, request);
+    
+    const oldUserPassword = await prismaClient.user.findUnique({
+      where: { id: user.id },
+      select: { password: true },
+    });
+
+    if (!oldUserPassword) {
+      throw new ResponseError(404, 'User not found');
+    }
+
+    const passwordMatch = await bcrypt.compare(updatePasswordRequest.old_password, oldUserPassword.password);
+
+    if (!passwordMatch) {
+      throw new ResponseError(400, 'Invalid old password');
+    }
+    
+    const hashedPassword = await bcrypt.hash(updatePasswordRequest.new_password, 10);
+
+    const updatedUser = await prismaClient.user.update({
+      where: { id: user.id },
+      data: { password: hashedPassword },
+    });
+    
+    return toUserResponse(updatedUser);
+  }
+
+  static async update(id: string, request: UpdateUserRequest): Promise<UserResponse> {
+    const updateRequest = Validation.validate(UserValidation.UPDATE, request);
+
+    if (updateRequest.email) {
+      const emailExists = await prismaClient.user.findFirst({
+        where: { email: updateRequest.email },
+      });
+
+      if (emailExists) {
+        throw new ResponseError(400, 'Email already exists');
+      }
+    }
+
+    await prismaClient.user.update({
+      where: { id },
+      data: updateRequest,
+    });
+
+    const response = await prismaClient.user.findUnique({
+      where: { id },
+    });
+
+    if (!response) {
+      throw new ResponseError(404, 'User not found');
+    }
+
+    return toUserResponse(response);
   }
 
   static async delete(id: string): Promise<UserResponse> {

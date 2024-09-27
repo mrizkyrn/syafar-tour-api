@@ -13,23 +13,30 @@ export const authApi = express.Router();
 
 authApi.use(authMiddleware);
 
+// Authentication
 authApi.post('/v1/auth/logout', AuthController.logout);
 
+// User
 authApi.get('/v1/user', permit('ADMIN'), UserController.getAll);
 authApi.get('/v1/user/current', UserController.getCurrent);
-authApi.patch('/v1/user/current', UserController.updateCurrent);
 authApi.get('/v1/user/:id', permit('ADMIN'), UserController.get);
 authApi.get('/v1/user/role/:role', permit('ADMIN'), UserController.getByRole);
-authApi.delete('/v1/user/:id', permit('ADMIN'), UserController.delete);
+authApi.patch('/v1/user/current', UserController.updateCurrent);
+authApi.patch('/v1/user/current/password', UserController.updateCurrentPassword);
+authApi.patch('/v1/user/:id', permit('ADMIN'), UserController.update);
 authApi.patch('/v1/user/upgrade/:id', UserController.upgradeToMitra);
+authApi.delete('/v1/user/:id', permit('ADMIN'), UserController.delete);
 
+// User Service
 authApi.post('/v1/user-service/bulk', permit('ADMIN'), UserServiceController.bulkUpdate);
 authApi.get('/v1/user-service/:type', UserServiceController.getByType);
 
+// Category
 authApi.post('/v1/category', permit('ADMIN'), CategoryController.create);
 authApi.put('/v1/category/:id', permit('ADMIN'), CategoryController.update);
 authApi.delete('/v1/category/:id', permit('ADMIN'), CategoryController.delete);
 
+// Product
 authApi.post(
   '/v1/product',
   permit('ADMIN'),
@@ -44,6 +51,7 @@ authApi.patch(
 );
 authApi.delete('/v1/product/:id', permit('ADMIN'), ProductController.delete);
 
+// Order
 authApi.get('/v1/order', permit('ADMIN'), OrderController.getAll);
 authApi.get('/v1/order/:id', OrderController.get);
 authApi.post('/v1/order', OrderController.create);
