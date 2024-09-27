@@ -1,6 +1,5 @@
 {
   "include": [
-    "api/*.ts",
     "src/**/*.ts"
   ],
   "compilerOptions": {

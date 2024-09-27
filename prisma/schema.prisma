@@ -23,7 +23,23 @@ model User {
   created_at      DateTime @default(now())
   updated_at      DateTime @updatedAt
 
-  Order Order[]
+  MitraApplication MitraApplication?
+  Order            Order[]
+}
+
+model MitraApplication {
+  id              String            @id @default(cuid())
+  user_id         String            @unique
+  ktp_file        String            @db.VarChar(255)
+  payment_proof   String            @db.VarChar(255)
+  status          ApplicationStatus @default(PENDING)
+  rejection_note  String?
+  created_at      DateTime          @default(now())
+  updated_at      DateTime          @updatedAt
+
+  User User @relation(fields: [user_id], references: [id])
+
+  @@map("mitra_applications")
 }
 
 model ServiceType {
@@ -192,4 +208,10 @@ enum Role {
   ADMIN
   MITRA
   USER
+}
+
+enum ApplicationStatus {
+  PENDING
+  APPROVED
+  REJECTED
 }

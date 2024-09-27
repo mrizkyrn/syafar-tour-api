@@ -50,6 +50,7 @@ export class AuthService {
         id: user.id,
         email: user.email,
         full_name: user.full_name,
+        whatsapp_number: user.whatsapp_number,
         role: user.role,
       },
       String(process.env.JWT_SECRET),

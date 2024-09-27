@@ -52,16 +52,4 @@ export class AuthController {
       next(error);
     }
   }
-
-  static async me(req: UserRequest, res: Response, next: NextFunction) {
-    try {
-      res.status(200).json({
-        success: true,
-        message: 'User retrieved successfully',
-        user: req.user,
-      });
-    } catch (error) {
-      next(error);
-    }
-  }
 }

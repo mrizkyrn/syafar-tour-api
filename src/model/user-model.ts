@@ -21,6 +21,12 @@ export type LoginUserRequest = {
    password: string;
 };
 
+export type UpdateUserRequest = {
+   full_name?: string;
+   email?: string;
+   whatsapp_number?: string;
+};
+
 export function toUserResponse(user: User): UserResponse {
    return {
       id: user.id,
