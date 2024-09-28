@@ -7,6 +7,8 @@ export type UserResponse = {
   whatsapp_number: string;
   role: string;
   token?: string;
+  created_at: Date;
+  updated_at: Date;
 };
 
 export type RegisterUserRequest = {
@@ -21,10 +23,28 @@ export type LoginUserRequest = {
   password: string;
 };
 
+export type UserQueryParams = {
+  full_name?: string;
+  email?: string;
+  whatsapp_number?: string;
+  role?: 'USER' | 'MITRA' | 'ADMIN';
+  sort?: string;
+  order?: 'asc' | 'desc';
+  page: number;
+  limit: number;
+};
+
+export type UpdateCurrentUserRequest = {
+  full_name?: string;
+  email?: string;
+  whatsapp_number?: string;
+};
+
 export type UpdateUserRequest = {
   full_name?: string;
   email?: string;
   whatsapp_number?: string;
+  role?: 'USER' | 'MITRA' | 'ADMIN';
 };
 
 export type UpdatePasswordRequest = {
@@ -39,5 +59,7 @@ export function toUserResponse(user: User): UserResponse {
     email: user.email,
     whatsapp_number: user.whatsapp_number,
     role: user.role,
+    created_at: user.created_at,
+    updated_at: user.updated_at,
   };
 }
