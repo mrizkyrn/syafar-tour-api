@@ -13,91 +13,91 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id              String   @id @default(cuid())
-  email           String   @unique
-  full_name       String   @db.VarChar(255)
-  password        String   @db.VarChar(255)
-  whatsapp_number String   @db.VarChar(255)
-  role            Role     @default(USER)
-  created_at      DateTime @default(now())
-  updated_at      DateTime @updatedAt
+// model User {
+//   id              String   @id @default(cuid())
+//   email           String   @unique
+//   full_name       String   @db.VarChar(255)
+//   password        String   @db.VarChar(255)
+//   whatsapp_number String   @db.VarChar(255)
+//   role            Role     @default(USER)
+//   created_at      DateTime @default(now())
+//   updated_at      DateTime @updatedAt
 
-  MitraApplication MitraApplication?
-  Order            Order[]
-}
+//   MitraApplication MitraApplication?
+//   Order            Order[]
+// }
 
-model MitraApplication {
-  id              String            @id @default(cuid())
-  user_id         String            @unique
-  ktp_file        String            @db.VarChar(255)
-  payment_proof   String            @db.VarChar(255)
-  status          ApplicationStatus @default(PENDING)
-  rejection_note  String?
-  created_at      DateTime          @default(now())
-  updated_at      DateTime          @updatedAt
+// model MitraApplication {
+//   id              String            @id @default(cuid())
+//   user_id         String            @unique
+//   ktp_file        String            @db.VarChar(255)
+//   payment_proof   String            @db.VarChar(255)
+//   status          ApplicationStatus @default(PENDING)
+//   rejection_note  String?
+//   created_at      DateTime          @default(now())
+//   updated_at      DateTime          @updatedAt
 
-  User User @relation(fields: [user_id], references: [id])
+//   User User @relation(fields: [user_id], references: [id])
 
-  @@map("mitra_applications")
-}
+//   @@map("mitra_applications")
+// }
 
-model ServiceType {
-  id         String        @id @default(cuid())
-  name       String        @unique @db.VarChar(255)
-  created_at DateTime      @default(now())
-  updated_at DateTime      @updatedAt
-  services   UserService[]
+// model ServiceType {
+//   id         String        @id @default(cuid())
+//   name       String        @unique @db.VarChar(255)
+//   created_at DateTime      @default(now())
+//   updated_at DateTime      @updatedAt
+//   services   UserService[]
 
-  @@map("service_type")
-}
+//   @@map("service_type")
+// }
 
-model UserService {
-  id              String   @id @default(cuid())
-  service_type_id String
-  name            String   @db.VarChar(255)
-  price           Decimal  @db.Decimal(10, 2)
-  order_number    Int
-  created_at      DateTime @default(now())
-  updated_at      DateTime @updatedAt
+// model UserService {
+//   id              String   @id @default(cuid())
+//   service_type_id String
+//   name            String   @db.VarChar(255)
+//   price           Decimal  @db.Decimal(12, 2)
+//   order_number    Int
+//   created_at      DateTime @default(now())
+//   updated_at      DateTime @updatedAt
 
-  ServiceType ServiceType @relation(fields: [service_type_id], references: [id])
+//   ServiceType ServiceType @relation(fields: [service_type_id], references: [id])
 
-  transportation Calculation[] @relation("TransportationRelation")
-  flight         Calculation[] @relation("FlightRelation")
-  hotelMekkah    Calculation[] @relation("HotelMekkahRelation")
-  hotelMadinah   Calculation[] @relation("HotelMadinahRelation")
-  muthawif       Calculation[] @relation("MuthawifRelation")
-  handling       Calculation[] @relation("HandlingRelation")
+//   transportation Calculation[] @relation("TransportationRelation")
+//   flight         Calculation[] @relation("FlightRelation")
+//   hotelMekkah    Calculation[] @relation("HotelMekkahRelation")
+//   hotelMadinah   Calculation[] @relation("HotelMadinahRelation")
+//   muthawif       Calculation[] @relation("MuthawifRelation")
+//   handling       Calculation[] @relation("HandlingRelation")
 
-  @@map("user_service")
-}
+//   @@map("user_service")
+// }
 
-model Calculation {
-  id                String  @id @default(cuid())
-  number_of_pax     Int
-  transportation_id String
-  flight_id         String
-  travel_duration   Int
-  mekkah_duration   Int
-  madinah_duration  Int
-  hotel_mekkah_id   String
-  hotel_madinah_id  String
-  muthawif_id       String
-  handling_id       String
-  total_price       Decimal @db.Decimal(10, 2)
-  per_pax_price     Decimal @db.Decimal(10, 2)
+// model Calculation {
+//   id                String  @id @default(cuid())
+//   number_of_pax     Int
+//   transportation_id String
+//   flight_id         String
+//   travel_duration   Int
+//   mekkah_duration   Int
+//   madinah_duration  Int
+//   hotel_mekkah_id   String
+//   hotel_madinah_id  String
+//   muthawif_id       String
+//   handling_id       String
+//   total_price       Decimal @db.Decimal(12, 2)
+//   per_pax_price     Decimal @db.Decimal(12, 2)
 
-  transportation UserService @relation("TransportationRelation", fields: [transportation_id], references: [id], onDelete: Cascade)
-  flight         UserService @relation("FlightRelation", fields: [flight_id], references: [id], onDelete: Cascade)
-  hotelMekkah    UserService @relation("HotelMekkahRelation", fields: [hotel_mekkah_id], references: [id], onDelete: Cascade)
-  hotelMadinah   UserService @relation("HotelMadinahRelation", fields: [hotel_madinah_id], references: [id], onDelete: Cascade)
-  muthawif       UserService @relation("MuthawifRelation", fields: [muthawif_id], references: [id], onDelete: Cascade)
-  handling       UserService @relation("HandlingRelation", fields: [handling_id], references: [id], onDelete: Cascade)
+//   transportation UserService @relation("TransportationRelation", fields: [transportation_id], references: [id], onDelete: Cascade)
+//   flight         UserService @relation("FlightRelation", fields: [flight_id], references: [id], onDelete: Cascade)
+//   hotelMekkah    UserService @relation("HotelMekkahRelation", fields: [hotel_mekkah_id], references: [id], onDelete: Cascade)
+//   hotelMadinah   UserService @relation("HotelMadinahRelation", fields: [hotel_madinah_id], references: [id], onDelete: Cascade)
+//   muthawif       UserService @relation("MuthawifRelation", fields: [muthawif_id], references: [id], onDelete: Cascade)
+//   handling       UserService @relation("HandlingRelation", fields: [handling_id], references: [id], onDelete: Cascade)
 
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
-}
+//   created_at DateTime @default(now())
+//   updated_at DateTime @updatedAt
+// }
 
 model Category {
   id            String   @id @default(cuid())
@@ -114,7 +114,7 @@ model Product {
   thumbnail   String   @db.VarChar(255)
   name        String   @db.VarChar(255)
   description String   @db.Text
-  price       Decimal  @db.Decimal(10, 2)
+  price       Decimal  @db.Decimal(12, 2)
   created_at  DateTime @default(now())
   updated_at  DateTime @updatedAt
 
@@ -143,7 +143,7 @@ model ProductVariation {
   id         String   @id @default(cuid())
   product_id String
   name       String   @default("Room") @db.VarChar(255)
-  price      Decimal  @db.Decimal(10, 2)
+  price      Decimal  @db.Decimal(12, 2)
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
 
@@ -195,13 +195,102 @@ model Order {
   variation     String
   departure     DateTime @db.Date
   number_of_pax Int
-  per_pax_price Decimal  @db.Decimal(10, 2)
-  total_price   Decimal  @db.Decimal(10, 2)
+  per_pax_price Decimal  @db.Decimal(12, 2)
+  total_price   Decimal  @db.Decimal(12, 2)
   created_at    DateTime @default(now())
   updated_at    DateTime @updatedAt
 
   User    User    @relation(fields: [user_id], references: [id], onDelete: Cascade)
   Product Product @relation(fields: [product_id], references: [id], onDelete: Cascade)
+}
+
+model User {
+  id              String   @id @default(cuid())
+  email           String   @unique
+  full_name       String   @db.VarChar(255)
+  password        String   @db.VarChar(255)
+  whatsapp_number String   @db.VarChar(255)
+  role            Role     @default(USER)
+  created_at      DateTime @default(now())
+  updated_at      DateTime @updatedAt
+
+  Order Order[]
+}
+
+model UserPackage {
+  id                String   @id @default(cuid())
+  transportation_id String?
+  flight_id         String?
+  hotel_mekkah_id   String?
+  hotel_madinah_id  String?
+  muthawif_id       String?
+  handling_id       String?
+  number_of_pax     Int
+  travel_duration   Int
+  mekkah_duration   Int
+  madinah_duration  Int
+  per_pax_price     Decimal  @db.Decimal(12, 2)
+  total_price       Decimal  @db.Decimal(12, 2)
+  created_at        DateTime @default(now())
+  updated_at        DateTime @updatedAt
+
+  UserPackageOrder UserPackageOrder[]
+
+  transportation UserPackageOption? @relation("TransportationRelation", fields: [transportation_id], references: [id], onDelete: SetNull)
+  flight         UserPackageOption? @relation("FlightRelation", fields: [flight_id], references: [id], onDelete: SetNull)
+  hotelMekkah    UserPackageOption? @relation("HotelMekkahRelation", fields: [hotel_mekkah_id], references: [id], onDelete: SetNull)
+  hotelMadinah   UserPackageOption? @relation("HotelMadinahRelation", fields: [hotel_madinah_id], references: [id], onDelete: SetNull)
+  muthawif       UserPackageOption? @relation("MuthawifRelation", fields: [muthawif_id], references: [id], onDelete: SetNull)
+  handling       UserPackageOption? @relation("HandlingRelation", fields: [handling_id], references: [id], onDelete: SetNull)
+
+  @@map("user_package")
+}
+
+model PackageType {
+  id         String   @id @default(cuid())
+  name       String   @db.VarChar(255)
+  is_public  Boolean  @default(false)
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  UserPackageOption UserPackageOption[]
+
+  @@map("package_type")
+}
+
+model UserPackageOption {
+  id              String   @id @default(cuid())
+  package_type_id String
+  name            String   @db.VarChar(255)
+  price           Decimal  @db.Decimal(12, 2)
+  order_number    Int
+  created_at      DateTime @default(now())
+  updated_at      DateTime @updatedAt
+
+  transportation UserPackage[] @relation("TransportationRelation")
+  flight         UserPackage[] @relation("FlightRelation")
+  hotelMekkah    UserPackage[] @relation("HotelMekkahRelation")
+  hotelMadinah   UserPackage[] @relation("HotelMadinahRelation")
+  muthawif       UserPackage[] @relation("MuthawifRelation")
+  handling       UserPackage[] @relation("HandlingRelation")
+
+  PackageType PackageType @relation(fields: [package_type_id], references: [id], onDelete: Cascade)
+
+  @@map("user_package_option")
+}
+
+model UserPackageOrder {
+  id              String   @id @default(cuid())
+  full_name       String   @db.VarChar(255)
+  email           String   @db.VarChar(255)
+  whatsapp_number String   @db.VarChar(255)
+  user_package_id String
+  created_at      DateTime @default(now())
+  updated_at      DateTime @updatedAt
+
+  UserPackage UserPackage @relation(fields: [user_package_id], references: [id])
+
+  @@map("user_package_order")
 }
 
 enum Role {

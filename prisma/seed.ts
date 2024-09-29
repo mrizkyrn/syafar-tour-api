@@ -13,7 +13,7 @@ const adminData = {
   role: 'ADMIN' as Role,
 };
 
-const serviceTypes = [
+const packageTypes = [
   { name: 'Tiket Pesawat' },
   { name: 'Hotel Makkah' },
   { name: 'Hotel Madinah' },
@@ -22,9 +22,9 @@ const serviceTypes = [
   { name: 'Handling' },
 ];
 
-type ServiceTypes = 'TiketPesawat' | 'HotelMakkah' | 'HotelMadinah' | 'Transportasi' | 'Muthawif' | 'Handling';
+type PackageTypes = 'TiketPesawat' | 'HotelMakkah' | 'HotelMadinah' | 'Transportasi' | 'Muthawif' | 'Handling';
 
-const serviceData: Record<ServiceTypes, Array<{ name: string; price: number; order_number?: number }>> = {
+const itemData: Record<PackageTypes, Array<{ name: string; price: number; order_number?: number }>> = {
   TiketPesawat: [
     { name: 'Tanpa Tiket Pesawat', price: 0, order_number: 1 },
     { name: 'Saudia Economy Class - CGK-JED', price: 5000000, order_number: 2 },
@@ -92,41 +92,39 @@ async function createAdminUser() {
   }
 }
 
-async function createServiceTypesAndServices() {
-  for (const type of serviceTypes) {
-    const serviceType = await prisma.serviceType.upsert({
-      where: { name: type.name },
-      update: {},
-      create: { name: type.name },
-    });
-
-    console.log(`Service Type: ${serviceType.name} (ID: ${serviceType.id})`);
-
-    const services = serviceData[type.name.replace(/\s/g, '') as keyof typeof serviceData] || [];
-
-    // Upsert each service
-    for (const service of services) {
-      const existingService = await prisma.userService.findFirst({
-        where: {
-          name: service.name,
-          service_type_id: serviceType.id,
+async function seedPackageItems() {
+  try {
+    for (const packageItem of packageTypes) {
+      const createdPackageItem = await prisma.packageType.create({
+        data: {
+          name: packageItem.name,
         },
       });
 
-      if (!existingService) {
-        await prisma.userService.create({
+      console.log(`Seeded Package Item: ${createdPackageItem.name}`);
+
+      const itemKey = packageItem.name.replace(/\s/g, '') as PackageTypes;
+      const relatedItems = itemData[itemKey];
+
+      for (const item of relatedItems) {
+        await prisma.userPackageOption.create({
           data: {
-            name: service.name,
-            price: service.price,
-            service_type_id: serviceType.id,
-            order_number: service.order_number || 0,
+            name: item.name,
+            price: item.price,
+            order_number: item.order_number ?? 0,
+            package_type_id: createdPackageItem.id,
           },
         });
-        console.log(`Service '${service.name}' under '${serviceType.name}' created`);
-      } else {
-        console.log(`Service '${service.name}' under '${serviceType.name}' already exists`);
+
+        console.log(`   Seeded User Package Item: ${item.name} for ${createdPackageItem.name}`);
       }
     }
+
+    console.log('Seeding completed successfully!');
+  } catch (error) {
+    console.error('Error seeding data:', error);
+  } finally {
+    await prisma.$disconnect();
   }
 }
 
@@ -155,7 +153,7 @@ async function main() {
   try {
     console.log('Starting seeding process...');
     await createAdminUser();
-    await createServiceTypesAndServices();
+    await seedPackageItems();
     await createCategories();
     console.log('Seeding completed successfully.');
   } catch (error) {

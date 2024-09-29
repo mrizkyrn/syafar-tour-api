@@ -1,19 +1,18 @@
 import { prismaClient } from '../application/database';
 import { ResponseError } from '../error/response-error';
-import {
-  BulkUpdateRequest,
-  GetByTypeRequest,
-  toUserServiceResponse,
-  UserServiceResponse,
-} from '../model/user-service-model';
-import { UserServiceValidation } from '../validation/user-service-validation';
+import { UserPackageOptionValidation } from '../validation/user-package-option-validation';
 import { Validation } from '../validation/validation';
+import {
+  UserPackageOptionResponse,
+  toUserPackageOptionResponse,
+  BulkUpdateRequest,
+} from '../model/user-package-option-model';
 
-export class UserServiceService {
-  static async getAll(): Promise<UserServiceResponse[]> {
-    const response = await prismaClient.userService.findMany({
+export class UserPackageOptionService {
+  static async getAll(): Promise<UserPackageOptionResponse[]> {
+    const response = await prismaClient.userPackageOption.findMany({
       include: {
-        ServiceType: {
+        PackageType: {
           select: {
             name: true,
           },
@@ -25,31 +24,31 @@ export class UserServiceService {
     });
 
     if (!response) {
-      throw new ResponseError(404, 'User services not found');
+      throw new ResponseError(404, 'User package options tidak ditemukan');
     }
 
-    return response.map((service) => toUserServiceResponse(service));
+    return response.map((option) => toUserPackageOptionResponse(option));
   }
 
-  static async getByType(request: GetByTypeRequest): Promise<UserServiceResponse[]> {
-    request.type = request.type.replace(/-/g, ' ');
+  static async getByType(type: string): Promise<UserPackageOptionResponse[]> {
+    type = type.replace(/-/g, ' ');
 
-    const serviceType = await prismaClient.serviceType.findUnique({
+    const packageType = await prismaClient.packageType.findFirst({
       where: {
-        name: request.type,
+        name: type,
       },
     });
 
-    if (!serviceType) {
-      throw new ResponseError(404, 'Service type not found');
+    if (!packageType) {
+      throw new ResponseError(404, 'Package type tidak ditemukan');
     }
 
-    const response = await prismaClient.userService.findMany({
+    const response = await prismaClient.userPackageOption.findMany({
       where: {
-        service_type_id: serviceType.id,
+        package_type_id: packageType.id,
       },
       include: {
-        ServiceType: {
+        PackageType: {
           select: {
             name: true,
           },
@@ -60,22 +59,16 @@ export class UserServiceService {
       },
     });
 
-    if (!response) {
-      throw new ResponseError(404, 'User services not found');
-    }
-
-    return response.map((service) => toUserServiceResponse(service));
+    return response.map((option) => toUserPackageOptionResponse(option));
   }
 
-  static async bulkUpdate(request: BulkUpdateRequest) {
+  static async bulkUpdate(request: BulkUpdateRequest): Promise<void> {
     const { type, modifiedData, deletedData } = request;
     const validatedModifiedData = modifiedData?.map((service) =>
-      Validation.validate(UserServiceValidation.BULK_UPDATE, service)
+      Validation.validate(UserPackageOptionValidation.BULK_UPDATE, service)
     );
 
-    console.log(type, validatedModifiedData, deletedData);
-
-    const serviceType = await prismaClient.serviceType.findUnique({
+    const serviceType = await prismaClient.packageType.findFirst({
       where: {
         name: type.replace(/-/g, ' '),
       },
@@ -90,7 +83,7 @@ export class UserServiceService {
       await Promise.all(
         validatedModifiedData.map(async (service) => {
           if (service.id) {
-            await prismaClient.userService.update({
+            await prismaClient.userPackageOption.update({
               where: {
                 id: service.id,
               },
@@ -101,11 +94,11 @@ export class UserServiceService {
               },
             });
           } else {
-            await prismaClient.userService.createMany({
+            await prismaClient.userPackageOption.createMany({
               data: {
                 name: service.name || '',
                 price: service.price || 0,
-                service_type_id: serviceType.id,
+                package_type_id: serviceType.id,
                 order_number: service.order_number,
               },
             });
@@ -116,7 +109,7 @@ export class UserServiceService {
 
     // handle delete
     if (deletedData.length > 0) {
-      await prismaClient.userService.deleteMany({
+      await prismaClient.userPackageOption.deleteMany({
         where: {
           id: {
             in: deletedData,

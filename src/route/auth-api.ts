@@ -1,13 +1,14 @@
 import express from 'express';
 import { authMiddleware } from '../middleware/auth-middleware';
+import { upload } from '../middleware/multer-middleware';
 import { permit } from '../middleware/permit-middleware';
 import { AuthController } from '../controller/auth-controller';
 import { UserController } from '../controller/user-controller';
-import { UserServiceController } from '../controller/user-service-controller';
 import { CategoryController } from '../controller/category-controller';
 import { ProductController } from '../controller/product-controller';
 import { OrderController } from '../controller/order-controller';
-import { upload } from '../middleware/multer-middleware';
+import { UserPackageOptionController } from '../controller/user-package-option-controller';
+import { UserPackageOrderController } from '../controller/user-package-order-controller';
 
 export const authApi = express.Router();
 
@@ -26,9 +27,13 @@ authApi.patch('/v1/users/:id', permit('ADMIN'), UserController.update);
 authApi.patch('/v1/users/upgrade/:id', UserController.upgradeToMitra);
 authApi.delete('/v1/users/:id', permit('ADMIN'), UserController.delete);
 
-// User Service
-authApi.post('/v1/user-service/bulk', permit('ADMIN'), UserServiceController.bulkUpdate);
-authApi.get('/v1/user-service/:type', UserServiceController.getByType);
+// User Package Option
+authApi.post('/v1/user-package-options/bulk', permit('ADMIN'), UserPackageOptionController.bulkUpdate);
+authApi.get('/v1/user-package-options/:type', permit('ADMIN'), UserPackageOptionController.getByType);
+
+// User Package Order
+authApi.get('/v1/user-package-orders', permit('ADMIN'), UserPackageOrderController.getAll);
+authApi.delete('/v1/user-package-orders/:id', permit('ADMIN'), UserPackageOrderController.delete);
 
 // Category
 authApi.post('/v1/category', permit('ADMIN'), CategoryController.create);
