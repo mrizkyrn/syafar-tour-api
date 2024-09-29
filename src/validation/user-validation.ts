@@ -1,6 +1,20 @@
 import { z, ZodType } from 'zod';
 
 export class UserValidation {
+  static readonly CREATE: ZodType = z.object({
+    full_name: z
+      .string({ required_error: 'Nama lengkap tidak boleh kosong' })
+      .min(3, 'Nama lengkap minimal 3 karakter')
+      .max(100, 'Nama lengkap maksimal 100 karakter'),
+    email: z.string({ required_error: 'Email tidak boleh kosong' }).email('Email tidak valid'),
+    whatsapp_number: z
+      .string({ required_error: 'Nomor WhatsApp tidak boleh kosong' })
+      .min(10, 'Nomor WhatsApp tidak valid')
+      .max(15, 'Nomor WhatsApp tidak valid'),
+    password: z.string({ required_error: 'Password tidak boleh kosong' }).min(6, 'Password minimal 6 karakter'),
+    role: z.string().optional(),
+  });
+
   static readonly QUERY: ZodType = z.object({
     full_name: z.string().optional(),
     email: z.string().email().optional(),
@@ -32,7 +46,7 @@ export class UserValidation {
     whatsapp_number: z.string().min(10, 'Nomor WhatsApp tidak valid').max(15, 'Nomor WhatsApp tidak valid').optional(),
     role: z.string().optional(),
   });
-  
+
   static readonly UPDATE_PASSWORD: ZodType = z.object({
     old_password: z
       .string({ required_error: 'Password lama tidak boleh kosong' })

@@ -18,6 +18,7 @@ authApi.use(authMiddleware);
 authApi.post('/v1/auth/logout', AuthController.logout);
 
 // User
+authApi.post('/v1/users', permit('ADMIN'), UserController.create);
 authApi.get('/v1/users', permit('ADMIN'), UserController.getAll);
 authApi.get('/v1/users/current', UserController.getCurrent);
 authApi.get('/v1/users/:id', permit('ADMIN'), UserController.get);

@@ -12,11 +12,38 @@ import {
   UpdatePasswordRequest,
   UpdateCurrentUserRequest,
   UserQueryParams,
+  CreateUserRequest,
 } from '../model/user-model';
 import { Validation } from '../validation/validation';
 import { UserValidation } from '../validation/user-validation';
 
 export class UserService {
+  static async create(request: CreateUserRequest): Promise<UserResponse> {
+    const createRequest = Validation.validate(UserValidation.CREATE, request);
+
+    const emailExists = await prismaClient.user.findFirst({
+      where: { email: createRequest.email },
+    });
+
+    if (emailExists) {
+      throw new ResponseError(400, 'Email sudah terdaftar');
+    }
+
+    const hashedPassword = await bcrypt.hash(createRequest.password, 10);
+
+    const user = await prismaClient.user.create({
+      data: {
+        full_name: createRequest.full_name,
+        email: createRequest.email,
+        password: hashedPassword,
+        whatsapp_number: createRequest.whatsapp_number,
+        role: createRequest.role,
+      },
+    });
+
+    return toUserResponse(user);
+  }
+
   static async getAll(queryParams: UserQueryParams): Promise<Pageable<UserResponse>> {
     const queryRequest = Validation.validate(UserValidation.QUERY, queryParams);
 

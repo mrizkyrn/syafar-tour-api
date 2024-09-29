@@ -23,6 +23,14 @@ export type LoginUserRequest = {
   password: string;
 };
 
+export type CreateUserRequest = {
+  full_name: string;
+  email: string;
+  whatsapp_number: string;
+  password: string;
+  role: 'USER' | 'MITRA' | 'ADMIN';
+};
+
 export type UserQueryParams = {
   full_name?: string;
   email?: string;
