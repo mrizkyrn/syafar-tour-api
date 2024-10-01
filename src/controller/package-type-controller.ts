@@ -1,14 +1,14 @@
 import { NextFunction, Request, Response } from 'express';
-import { ServiceTypeService } from '../service/service_type_service';
+import { PackageTypeService } from '../service/package_type_service';
 
-export class ServiceTypeController {
+export class PackageTypeController {
   static async getAll(req: Request, res: Response, next: NextFunction) {
     try {
-      const response = await ServiceTypeService.getAll();
+      const response = await PackageTypeService.getAll();
 
       res.status(200).json({
         success: true,
-        message: 'Service types retrieved successfully',
+        message: 'Package types retrieved successfully',
         data: response,
       });
     } catch (error) {

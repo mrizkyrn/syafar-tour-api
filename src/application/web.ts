@@ -9,7 +9,7 @@ import { errorMiddleware } from '../middleware/error-middleware';
 export const web = express();
 
 web.use(express.json());
-web.use(express.static('public'));
+web.use('/public', express.static('public'));
 
 web.use(cors({ origin: process.env.CORS_ORIGIN, credentials: true }));
 web.use(cookieParser());

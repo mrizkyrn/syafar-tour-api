@@ -16,7 +16,7 @@ export class AuthService {
     });
 
     if (emailExists) {
-      throw new ResponseError(400, 'Email already exists');
+      throw new ResponseError(400, 'Email sudah terdaftar');
     }
 
     registerRequest.password = await bcrypt.hash(registerRequest.password, 10);
@@ -36,13 +36,13 @@ export class AuthService {
     });
 
     if (!user) {
-      throw new ResponseError(400, 'Invalid username or password');
+      throw new ResponseError(400, 'Email atau password salah');
     }
 
     const passwordMatch = await bcrypt.compare(loginRequest.password, user.password);
 
     if (!passwordMatch) {
-      throw new ResponseError(400, 'Invalid username or password');
+      throw new ResponseError(400, 'Email atau password salah');
     }
 
     const token = jwt.sign(
@@ -50,6 +50,7 @@ export class AuthService {
         id: user.id,
         email: user.email,
         full_name: user.full_name,
+        whatsapp_number: user.whatsapp_number,
         role: user.role,
       },
       String(process.env.JWT_SECRET),
