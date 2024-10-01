@@ -4,6 +4,7 @@ import { ResponseError } from '../error/response-error';
 
 export const errorMiddleware = async (error: Error, req: Request, res: Response, next: NextFunction) => {
    if (error instanceof ZodError) {
+      console.log(error);
       res.status(400).json({
          success: false,
          message: error.errors[0].message,

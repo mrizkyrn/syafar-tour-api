@@ -62,11 +62,7 @@ const itemData: Record<PackageTypes, Array<{ name: string; price: number; order_
   ],
 };
 
-const CategoryData = [
-  { name: 'Paket Umroh', has_variation: true },
-  { name: 'Visa Umroh', has_variation: false },
-  { name: 'Paket Hotel', has_variation: true },
-];
+const CategoryData = [{ name: 'Paket Umroh' }, { name: 'Visa Umroh' }, { name: 'Paket Hotel' }];
 
 async function createAdminUser() {
   const existingAdmin = await prisma.user.findFirst({
@@ -138,7 +134,6 @@ async function createCategories() {
       await prisma.category.create({
         data: {
           name: category.name,
-          has_variation: category.has_variation,
         },
       });
 

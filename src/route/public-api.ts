@@ -27,9 +27,9 @@ publicRouter.get('/v1/user-package-options', UserPackageOptionController.getAll)
 publicRouter.post('/v1/user-package-orders', UserPackageOrderController.create);
 
 // Category
-publicRouter.get('/v1/category', CategoryController.getAll);
-publicRouter.get('/v1/category/:id', CategoryController.get);
+publicRouter.get('/v1/categories', CategoryController.getAll);
+publicRouter.get('/v1/categories/:id', CategoryController.get);
 
 // Product
-publicRouter.get('/v1/product', ProductController.getAll);
-publicRouter.get('/v1/product/:id', ProductController.get);
+publicRouter.get('/v1/products', ProductController.getAll);
+publicRouter.get('/v1/products/:id', ProductController.get);

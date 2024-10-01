@@ -99,111 +99,6 @@ datasource db {
 //   updated_at DateTime @updatedAt
 // }
 
-model Category {
-  id            String   @id @default(cuid())
-  name          String   @db.VarChar(255)
-  has_variation Boolean  @default(false)
-  created_at    DateTime @default(now())
-  updated_at    DateTime @updatedAt
-
-  ProductCategories ProductCategory[]
-}
-
-model Product {
-  id          String   @id @default(cuid())
-  thumbnail   String   @db.VarChar(255)
-  name        String   @db.VarChar(255)
-  description String   @db.Text
-  price       Decimal  @db.Decimal(12, 2)
-  created_at  DateTime @default(now())
-  updated_at  DateTime @updatedAt
-
-  ProductCategories ProductCategory[]
-  ProductVariations ProductVariation[]
-  ProductImages     ProductImage[]
-  ProductInclude    ProductInclude[]
-  ProductExclude    ProductExclude[]
-  Order             Order[]
-}
-
-model ProductCategory {
-  id          String   @id @default(cuid())
-  product_id  String
-  category_id String
-  created_at  DateTime @default(now())
-  updated_at  DateTime @updatedAt
-
-  Product  Product  @relation(fields: [product_id], references: [id], onDelete: Cascade)
-  Category Category @relation(fields: [category_id], references: [id], onDelete: Cascade)
-
-  @@map("product_category")
-}
-
-model ProductVariation {
-  id         String   @id @default(cuid())
-  product_id String
-  name       String   @default("Room") @db.VarChar(255)
-  price      Decimal  @db.Decimal(12, 2)
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
-
-  Product Product @relation(fields: [product_id], references: [id], onDelete: Cascade)
-
-  @@map("product_variation")
-}
-
-model ProductInclude {
-  id         String   @id @default(cuid())
-  product_id String
-  point      String   @db.VarChar(255)
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
-
-  Product Product @relation(fields: [product_id], references: [id], onDelete: Cascade)
-
-  @@map("product_include")
-}
-
-model ProductExclude {
-  id         String   @id @default(cuid())
-  product_id String
-  point      String   @db.VarChar(255)
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
-
-  Product Product @relation(fields: [product_id], references: [id], onDelete: Cascade)
-
-  @@map("product_exclude")
-}
-
-model ProductImage {
-  id         String   @id @default(cuid())
-  product_id String
-  image_url  String   @db.VarChar(255)
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
-
-  Product Product @relation(fields: [product_id], references: [id], onDelete: Cascade)
-
-  @@map("product_image")
-}
-
-model Order {
-  id            String   @id @default(cuid())
-  user_id       String
-  product_id    String
-  variation     String
-  departure     DateTime @db.Date
-  number_of_pax Int
-  per_pax_price Decimal  @db.Decimal(12, 2)
-  total_price   Decimal  @db.Decimal(12, 2)
-  created_at    DateTime @default(now())
-  updated_at    DateTime @updatedAt
-
-  User    User    @relation(fields: [user_id], references: [id], onDelete: Cascade)
-  Product Product @relation(fields: [product_id], references: [id], onDelete: Cascade)
-}
-
 model User {
   id              String   @id @default(cuid())
   email           String   @unique
@@ -214,7 +109,7 @@ model User {
   created_at      DateTime @default(now())
   updated_at      DateTime @updatedAt
 
-  Order Order[]
+  ProductOrders ProductOrder[]
 }
 
 model UserPackage {
@@ -234,7 +129,7 @@ model UserPackage {
   created_at        DateTime @default(now())
   updated_at        DateTime @updatedAt
 
-  UserPackageOrder UserPackageOrder[]
+  UserPackageOrders UserPackageOrder[]
 
   transportation UserPackageOption? @relation("TransportationRelation", fields: [transportation_id], references: [id], onDelete: SetNull)
   flight         UserPackageOption? @relation("FlightRelation", fields: [flight_id], references: [id], onDelete: SetNull)
@@ -253,7 +148,7 @@ model PackageType {
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
 
-  UserPackageOption UserPackageOption[]
+  UserPackageOptions UserPackageOption[]
 
   @@map("package_type")
 }
@@ -267,12 +162,12 @@ model UserPackageOption {
   created_at      DateTime @default(now())
   updated_at      DateTime @updatedAt
 
-  transportation UserPackage[] @relation("TransportationRelation")
-  flight         UserPackage[] @relation("FlightRelation")
-  hotelMekkah    UserPackage[] @relation("HotelMekkahRelation")
-  hotelMadinah   UserPackage[] @relation("HotelMadinahRelation")
-  muthawif       UserPackage[] @relation("MuthawifRelation")
-  handling       UserPackage[] @relation("HandlingRelation")
+  transportations UserPackage[] @relation("TransportationRelation")
+  flights         UserPackage[] @relation("FlightRelation")
+  hotelMekkahs    UserPackage[] @relation("HotelMekkahRelation")
+  hotelMadinahs   UserPackage[] @relation("HotelMadinahRelation")
+  muthawifs       UserPackage[] @relation("MuthawifRelation")
+  handlings       UserPackage[] @relation("HandlingRelation")
 
   PackageType PackageType @relation(fields: [package_type_id], references: [id], onDelete: Cascade)
 
@@ -291,6 +186,107 @@ model UserPackageOrder {
   UserPackage UserPackage @relation(fields: [user_package_id], references: [id])
 
   @@map("user_package_order")
+}
+
+model Category {
+  id         String   @id @default(cuid())
+  name       String   @db.VarChar(255)
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  ProductCategories ProductCategory[]
+}
+
+model Product {
+  id            String   @id @default(cuid())
+  name          String   @db.VarChar(255)
+  description   String?  @db.Text
+  price         Decimal  @default(0) @db.Decimal(12, 2)
+  has_variation Boolean  @default(false)
+  created_at    DateTime @default(now())
+  updated_at    DateTime @updatedAt
+
+  ProductThumbnails ProductThumbnail[]
+  ProductCategories ProductCategory[]
+  ProductVariations ProductVariation[]
+  ProductIncludes   ProductInclude[]
+  ProductExcludes   ProductExclude[]
+  ProductOrders     ProductOrder[]
+}
+
+model ProductThumbnail {
+  id         String @id @default(cuid())
+  product_id String
+  image_url  String @db.VarChar(255)
+
+  Product Product @relation(fields: [product_id], references: [id], onDelete: Cascade)
+
+  @@map("product_thumbnail")
+}
+
+model ProductCategory {
+  id          String @id @default(cuid())
+  product_id  String
+  category_id String
+
+  Product  Product  @relation(fields: [product_id], references: [id], onDelete: Cascade)
+  Category Category @relation(fields: [category_id], references: [id], onDelete: Cascade)
+
+  @@map("product_category")
+}
+
+model ProductVariation {
+  id         String   @id @default(cuid())
+  product_id String
+  name       String   @db.VarChar(255)
+  price      Decimal  @db.Decimal(12, 2)
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  ProductOrders ProductOrder[]
+
+  Product Product @relation(fields: [product_id], references: [id], onDelete: Cascade)
+
+  @@map("product_variation")
+}
+
+model ProductInclude {
+  id          String @id @default(cuid())
+  product_id  String
+  description String @db.VarChar(255)
+
+  Product Product @relation(fields: [product_id], references: [id], onDelete: Cascade)
+
+  @@map("product_include")
+}
+
+model ProductExclude {
+  id          String @id @default(cuid())
+  product_id  String
+  description String @db.VarChar(255)
+
+  Product Product @relation(fields: [product_id], references: [id], onDelete: Cascade)
+
+  @@map("product_exclude")
+}
+
+model ProductOrder {
+  id            String   @id @default(cuid())
+  user_id       String
+  product_id    String
+  variation_id  String?
+  departure     DateTime @db.Date
+  number_of_pax Int
+  per_pax_price Decimal  @db.Decimal(12, 2)
+  total_price   Decimal  @db.Decimal(12, 2)
+  created_at    DateTime @default(now())
+  updated_at    DateTime @updatedAt
+
+  User      User              @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  Product   Product           @relation(fields: [product_id], references: [id], onDelete: Cascade)
+  ProductVariation ProductVariation? @relation(fields: [variation_id], references: [id], onDelete: SetNull)
+
+  @@map("product_order")
 }
 
 enum Role {

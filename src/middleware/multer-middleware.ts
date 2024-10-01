@@ -3,17 +3,37 @@ import path from 'path';
 import fs from 'fs';
 
 // Ensure the uploads directory exists
-const uploadDir = 'public/uploads';
+const uploadDir = 'public/upload';
 if (!fs.existsSync(uploadDir)) {
   console.log('Creating uploads directory...');
   fs.mkdirSync(uploadDir, { recursive: true });
 }
 
+// Get the subfolder based on the field name
+const getSubfolder = (fieldName: string): string => {
+  switch (fieldName) {
+    case 'thumbnails':
+      return path.join(uploadDir, 'thumbnail');
+    default:
+      return path.join(uploadDir, 'others');
+  }
+};
+
+// Ensure the subfolders exist
+const subfolders = ['thumbnail', 'others'];
+subfolders.forEach((folder) => {
+  const dir = path.join(uploadDir, folder);
+  if (!fs.existsSync(dir)) {
+    console.log(`Creating ${dir} directory...`);
+    fs.mkdirSync(dir, { recursive: true });
+  }
+});
+
 // Set up storage with a dynamic folder based on request or content type
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    const folder = uploadDir;
-    cb(null, folder);
+    const folderName = getSubfolder(file.fieldname);
+    cb(null, folderName);
   },
   filename: function (req, file, cb) {
     const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
@@ -44,4 +64,3 @@ export const upload = multer({
   fileFilter,
   limits,
 });
-

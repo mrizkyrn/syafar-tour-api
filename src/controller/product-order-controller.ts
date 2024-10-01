@@ -1,13 +1,13 @@
 import { NextFunction, Request, Response } from 'express';
-import { OrderService } from '../service/order-service';
-import { CreateOrderRequest } from '../model/order-model';
+import { ProductOrderService } from '../service/product-order-service';
+import { CreateProductOrderRequest } from '../model/product-order-model';
 import { UserRequest } from '../type/user-request';
 
-export class OrderController {
+export class ProductOrderController {
   static async create(req: UserRequest, res: Response, next: NextFunction) {
     try {
-      const request: CreateOrderRequest = req.body as CreateOrderRequest;
-      const response = await OrderService.create(req.user, request);
+      const request: CreateProductOrderRequest = req.body as CreateProductOrderRequest;
+      const response = await ProductOrderService.create(req.user, request);
 
       res.status(201).json({
         success: true,
@@ -22,7 +22,7 @@ export class OrderController {
 
   static async getAll(req: Request, res: Response, next: NextFunction) {
     try {
-      const response = await OrderService.getAll();
+      const response = await ProductOrderService.getAll();
 
       res.status(200).json({
         success: true,
@@ -34,15 +34,14 @@ export class OrderController {
     }
   }
 
-  static async get(req: Request, res: Response, next: NextFunction) {
+  static async delete(req: Request, res: Response, next: NextFunction) {
     try {
       const id = req.params.id;
-      const response = await OrderService.get(id);
+      await ProductOrderService.delete(id);
 
       res.status(200).json({
         success: true,
-        message: 'Order retrieved successfully',
-        data: response,
+        message: 'Order deleted successfully',
       });
     } catch (error) {
       next(error);
