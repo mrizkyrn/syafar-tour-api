@@ -77,20 +77,6 @@ export class ProductService {
     const queryRequest = Validation.validate(ProductValidation.QUERY, queryParams);
 
     const skip = (queryRequest.page - 1) * queryRequest.limit;
-    // const filter = {
-    //   name: { contains: queryRequest.name },
-    //   has_variation: queryRequest.has_variation,
-    //   ProductCategories: queryRequest.category_id?.length
-    //     ? {
-    //         some: {
-    //           category_id: {
-    //             in: queryRequest.category_id,
-    //           },
-    //         },
-    //       }
-    //     : undefined,
-    // };
-
     const filter = [];
 
     if (queryRequest.name) {
@@ -117,8 +103,6 @@ export class ProductService {
       });
     }
 
-    console.log(filter);
-
     const products = await prismaClient.product.findMany({
       include: {
         ProductCategories: {
@@ -140,7 +124,7 @@ export class ProductService {
         AND: filter,
       },
       orderBy: {
-        [queryRequest.sort || 'created_at']: queryRequest.order || 'asc',
+        [queryRequest.sort || 'created_at']: queryRequest.order || 'desc',
       },
       skip,
       take: queryRequest.limit,

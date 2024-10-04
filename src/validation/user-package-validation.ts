@@ -9,12 +9,10 @@ export class UserPackageValidation {
       .positive('Durasi perjalanan harus positif'),
     mekkah_duration: z
       .number()
-      .int({ message: 'Durasi di Mekkah harus integer' })
-      .positive('Durasi di Mekkah harus positif'),
+      .int({ message: 'Durasi di Mekkah harus integer' }),
     madinah_duration: z
       .number()
-      .int({ message: 'Durasi di Madinah harus integer' })
-      .positive('Durasi di Madinah harus positif'),
+      .int({ message: 'Durasi di Madinah harus integer' }),
     transportation_id: z.string({ message: 'Transportasi harus diisi' }),
     flight_id: z.string({ message: 'Tiket pesawat harus diisi' }),
     hotel_mekkah_id: z.string({ message: 'Hotel di Mekkah harus diisi' }),

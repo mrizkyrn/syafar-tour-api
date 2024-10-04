@@ -9,6 +9,9 @@ import { ProductController } from '../controller/product-controller';
 import { ProductOrderController } from '../controller/product-order-controller';
 import { UserPackageOptionController } from '../controller/user-package-option-controller';
 import { UserPackageOrderController } from '../controller/user-package-order-controller';
+import { VendorController } from '../controller/vendor-controller';
+import { HotelController } from '../controller/hotel-controller';
+import { PeriodController } from '../controller/period-controller';
 
 export const authApi = express.Router();
 
@@ -60,3 +63,25 @@ authApi.delete('/v1/products/:id', permit('ADMIN'), ProductController.delete);
 authApi.get('/v1/product-orders', permit('ADMIN'), ProductOrderController.getAll);
 authApi.delete('/v1/product-orders/:id', permit('ADMIN'), ProductOrderController.delete);
 authApi.post('/v1/product-orders', ProductOrderController.create);
+
+// Vendor
+authApi.post('/v1/vendors', permit('ADMIN'), VendorController.create);
+authApi.get('/v1/vendors', permit('ADMIN'), VendorController.getAll);
+authApi.get('/v1/vendors/:id', permit('ADMIN'), VendorController.getById);
+authApi.put('/v1/vendors/:id', permit('ADMIN'), VendorController.update);
+authApi.delete('/v1/vendors/:id', permit('ADMIN'), VendorController.delete);
+
+// Hotel
+authApi.post('/v1/hotels', permit('ADMIN'), HotelController.create);
+authApi.get('/v1/hotels', permit('ADMIN'), HotelController.getAll);
+authApi.get('/v1/hotels/:id', permit('ADMIN'), HotelController.getById);
+authApi.put('/v1/hotels/:id', permit('ADMIN'), HotelController.update);
+authApi.post('/v1/hotels/bulk', permit('ADMIN'), HotelController.bulkUpdate);
+authApi.delete('/v1/hotels/:id', permit('ADMIN'), HotelController.delete);
+
+// Period
+authApi.post('/v1/periods', permit('ADMIN'), PeriodController.create);
+authApi.get('/v1/periods', permit('ADMIN'), PeriodController.getAll);
+authApi.get('/v1/periods/:id', permit('ADMIN'), PeriodController.getById);
+authApi.put('/v1/periods/:id', permit('ADMIN'), PeriodController.update);
+authApi.delete('/v1/periods/:id', permit('ADMIN'), PeriodController.delete);

@@ -58,7 +58,6 @@ export class ProductController {
         page: req.query.page ? Number(req.query.page as string) : 1,
         limit: req.query.limit ? Number(req.query.limit as string) : 10,
       };
-      console.log(query);
       const response = await ProductService.getAll(query);
 
       res.status(200).json({
@@ -87,7 +86,6 @@ export class ProductController {
   }
 
   static async update(req: Request, res: Response, next: NextFunction) {
-    console.log(req.body);
     try {
       const id = req.params.id;
 
@@ -121,7 +119,6 @@ export class ProductController {
         includes: req.body.includes,
         excludes: req.body.excludes,
       };
-      console.log(request);
 
       const response = await ProductService.update(id, request);
 

@@ -64,6 +64,20 @@ const itemData: Record<PackageTypes, Array<{ name: string; price: number; order_
 
 const CategoryData = [{ name: 'Paket Umroh' }, { name: 'Visa Umroh' }, { name: 'Paket Hotel' }];
 
+type PeriodCategory = 'LOW' | 'MID' | 'HIGH' | 'RAMADHAN' | 'ITIKAF';
+const periods = [
+  { cateogry: 'LOW' as PeriodCategory, start_date: new Date('2024-09-01'), end_date: new Date('2024-11-30') },
+  { cateogry: 'MID' as PeriodCategory, start_date: new Date('2024-12-01'), end_date: new Date('2024-12-16') },
+  { cateogry: 'HIGH' as PeriodCategory, start_date: new Date('2024-12-17'), end_date: new Date('2025-01-11') },
+  { cateogry: 'MID' as PeriodCategory, start_date: new Date('2025-01-12'), end_date: new Date('2025-02-28') },
+  { cateogry: 'RAMADHAN' as PeriodCategory, start_date: new Date('2025-03-01'), end_date: new Date('2025-03-15') },
+  { cateogry: 'ITIKAF' as PeriodCategory, start_date: new Date('2025-03-16'), end_date: new Date('2025-03-31') },
+  { cateogry: 'MID' as PeriodCategory, start_date: new Date('2025-04-01'), end_date: new Date('2025-04-10') },
+  { cateogry: 'LOW' as PeriodCategory, start_date: new Date('2025-04-11'), end_date: new Date('2025-04-30') },
+];
+
+const vendors = [{ name: 'MKM' }, { name: 'ALH' }, { name: 'HVN' }, { name: 'ALK' }];
+
 async function createAdminUser() {
   const existingAdmin = await prisma.user.findFirst({
     where: { email: adminData.email },
@@ -144,12 +158,56 @@ async function createCategories() {
   }
 }
 
+async function createPeriods() {
+  for (const period of periods) {
+    const existingPeriod = await prisma.period.findFirst({
+      where: { start_date: period.start_date, end_date: period.end_date },
+    });
+
+    if (!existingPeriod) {
+      await prisma.period.create({
+        data: {
+          category: period.cateogry,
+          start_date: period.start_date,
+          end_date: period.end_date,
+        },
+      });
+
+      console.log(`Period from ${period.start_date} to ${period.end_date} created`);
+    } else {
+      console.log(`Period from ${period.start_date} to ${period.end_date} already exists`);
+    }
+  }
+}
+
+async function createVendors() {
+  for (const vendor of vendors) {
+    const existingVendor = await prisma.vendor.findFirst({
+      where: { name: vendor.name },
+    });
+
+    if (!existingVendor) {
+      await prisma.vendor.create({
+        data: {
+          name: vendor.name,
+        },
+      });
+
+      console.log(`Vendor '${vendor.name}' created`);
+    } else {
+      console.log(`Vendor '${vendor.name}' already exists`);
+    }
+  }
+}
+
 async function main() {
   try {
     console.log('Starting seeding process...');
     await createAdminUser();
     await seedPackageItems();
     await createCategories();
+    await createPeriods();
+    await createVendors();
     console.log('Seeding completed successfully.');
   } catch (error) {
     console.error('Error during seeding:', error);

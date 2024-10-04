@@ -19,6 +19,6 @@ web.use(authApi);
 
 web.use(errorMiddleware);
 
-web.get('/test', (req, res) => {
+web.get('/', (req, res) => {
   res.send('Hello World');
 });

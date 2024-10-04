@@ -59,7 +59,7 @@ export class UserService {
     const users = await prismaClient.user.findMany({
       where: filter,
       orderBy: {
-        [queryRequest.sort || 'created_at']: queryRequest.order || 'asc',
+        [queryRequest.sort || 'created_at']: queryRequest.order || 'desc',
       },
       skip,
       take: queryRequest.limit,
@@ -161,7 +161,6 @@ export class UserService {
 
   static async update(id: string, request: UpdateUserRequest): Promise<UserResponse> {
     const updateRequest = Validation.validate(UserValidation.UPDATE, request);
-    console.log(updateRequest);
 
     if (updateRequest.email) {
       const emailExists = await prismaClient.user.findFirst({

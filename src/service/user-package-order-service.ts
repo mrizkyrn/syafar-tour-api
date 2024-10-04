@@ -15,7 +15,6 @@ import { Pageable } from '../model/page';
 export class UserPackageOrderService {
   static async create(request: CreateUserPackageOrderRequest): Promise<UserPackageOrderResponse> {
     const createRequest = Validation.validate(UserPackageOrderValidation.CREATE, request);
-    console.log(createRequest);
 
     const userPackage = await prismaClient.userPackage.findUnique({
       include: {
@@ -47,9 +46,9 @@ export class UserPackageOrderService {
     const filter = queryRequest.search
       ? {
           OR: [
-            { full_name: { contains: queryRequest.search } },
-            { email: { contains: queryRequest.search } },
-            { whatsapp_number: { contains: queryRequest.search } },
+            { full_name: { contains: queryRequest.search, mode: 'insensitive' } },
+            { email: { contains: queryRequest.search, mode: 'insensitive' } },
+            { whatsapp_number: { contains: queryRequest.search, mode: 'insensitive' } },
           ],
         }
       : {};
@@ -69,7 +68,7 @@ export class UserPackageOrderService {
       },
       where: filter,
       orderBy: {
-        [queryRequest.sort || 'created_at']: queryRequest.order || 'asc',
+        [queryRequest.sort || 'created_at']: queryRequest.order || 'desc',
       },
       skip,
       take: queryRequest.limit,

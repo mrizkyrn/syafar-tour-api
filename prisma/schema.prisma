@@ -5,99 +5,14 @@
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 generator client {
-  provider = "prisma-client-js"
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "debian-openssl-1.0.x", "debian-openssl-3.0.x"]
 }
 
 datasource db {
   provider = "mysql"
   url      = env("DATABASE_URL")
 }
-
-// model User {
-//   id              String   @id @default(cuid())
-//   email           String   @unique
-//   full_name       String   @db.VarChar(255)
-//   password        String   @db.VarChar(255)
-//   whatsapp_number String   @db.VarChar(255)
-//   role            Role     @default(USER)
-//   created_at      DateTime @default(now())
-//   updated_at      DateTime @updatedAt
-
-//   MitraApplication MitraApplication?
-//   Order            Order[]
-// }
-
-// model MitraApplication {
-//   id              String            @id @default(cuid())
-//   user_id         String            @unique
-//   ktp_file        String            @db.VarChar(255)
-//   payment_proof   String            @db.VarChar(255)
-//   status          ApplicationStatus @default(PENDING)
-//   rejection_note  String?
-//   created_at      DateTime          @default(now())
-//   updated_at      DateTime          @updatedAt
-
-//   User User @relation(fields: [user_id], references: [id])
-
-//   @@map("mitra_applications")
-// }
-
-// model ServiceType {
-//   id         String        @id @default(cuid())
-//   name       String        @unique @db.VarChar(255)
-//   created_at DateTime      @default(now())
-//   updated_at DateTime      @updatedAt
-//   services   UserService[]
-
-//   @@map("service_type")
-// }
-
-// model UserService {
-//   id              String   @id @default(cuid())
-//   service_type_id String
-//   name            String   @db.VarChar(255)
-//   price           Decimal  @db.Decimal(12, 2)
-//   order_number    Int
-//   created_at      DateTime @default(now())
-//   updated_at      DateTime @updatedAt
-
-//   ServiceType ServiceType @relation(fields: [service_type_id], references: [id])
-
-//   transportation Calculation[] @relation("TransportationRelation")
-//   flight         Calculation[] @relation("FlightRelation")
-//   hotelMekkah    Calculation[] @relation("HotelMekkahRelation")
-//   hotelMadinah   Calculation[] @relation("HotelMadinahRelation")
-//   muthawif       Calculation[] @relation("MuthawifRelation")
-//   handling       Calculation[] @relation("HandlingRelation")
-
-//   @@map("user_service")
-// }
-
-// model Calculation {
-//   id                String  @id @default(cuid())
-//   number_of_pax     Int
-//   transportation_id String
-//   flight_id         String
-//   travel_duration   Int
-//   mekkah_duration   Int
-//   madinah_duration  Int
-//   hotel_mekkah_id   String
-//   hotel_madinah_id  String
-//   muthawif_id       String
-//   handling_id       String
-//   total_price       Decimal @db.Decimal(12, 2)
-//   per_pax_price     Decimal @db.Decimal(12, 2)
-
-//   transportation UserService @relation("TransportationRelation", fields: [transportation_id], references: [id], onDelete: Cascade)
-//   flight         UserService @relation("FlightRelation", fields: [flight_id], references: [id], onDelete: Cascade)
-//   hotelMekkah    UserService @relation("HotelMekkahRelation", fields: [hotel_mekkah_id], references: [id], onDelete: Cascade)
-//   hotelMadinah   UserService @relation("HotelMadinahRelation", fields: [hotel_madinah_id], references: [id], onDelete: Cascade)
-//   muthawif       UserService @relation("MuthawifRelation", fields: [muthawif_id], references: [id], onDelete: Cascade)
-//   handling       UserService @relation("HandlingRelation", fields: [handling_id], references: [id], onDelete: Cascade)
-
-//   created_at DateTime @default(now())
-//   updated_at DateTime @updatedAt
-// }
 
 model User {
   id              String   @id @default(cuid())
@@ -110,6 +25,8 @@ model User {
   updated_at      DateTime @updatedAt
 
   ProductOrders ProductOrder[]
+
+  @@map("user")
 }
 
 model UserPackage {
@@ -195,6 +112,8 @@ model Category {
   updated_at DateTime @updatedAt
 
   ProductCategories ProductCategory[]
+
+  @@map("category")
 }
 
 model Product {
@@ -212,6 +131,8 @@ model Product {
   ProductIncludes   ProductInclude[]
   ProductExcludes   ProductExclude[]
   ProductOrders     ProductOrder[]
+
+  @@map("product")
 }
 
 model ProductThumbnail {
@@ -282,11 +203,81 @@ model ProductOrder {
   created_at    DateTime @default(now())
   updated_at    DateTime @updatedAt
 
-  User      User              @relation(fields: [user_id], references: [id], onDelete: Cascade)
-  Product   Product           @relation(fields: [product_id], references: [id], onDelete: Cascade)
+  User             User              @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  Product          Product           @relation(fields: [product_id], references: [id], onDelete: Cascade)
   ProductVariation ProductVariation? @relation(fields: [variation_id], references: [id], onDelete: SetNull)
 
   @@map("product_order")
+}
+
+model Vendor {
+  id         String   @id @default(cuid())
+  name       String   @db.VarChar(255)
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  Hotels Hotel[]
+  Tours  Tour[]
+
+  @@map("vendor")
+}
+
+model Tour {
+  id         String   @id @default(cuid())
+  vendor_id  String
+  name       String   @db.VarChar(255)
+  price      Decimal  @db.Decimal(12, 2)
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  Vendor Vendor @relation(fields: [vendor_id], references: [id], onDelete: Cascade)
+
+  @@map("tour")
+}
+
+model Hotel {
+  id           String   @id @default(cuid())
+  vendor_id    String
+  name         String   @db.VarChar(255)
+  city         City
+  order_number Int
+  created_at   DateTime @default(now())
+  updated_at   DateTime @updatedAt
+
+  Vendor            Vendor             @relation(fields: [vendor_id], references: [id], onDelete: Cascade)
+  HotelPeriodPrices HotelPeriodPrice[]
+
+  @@map("hotel")
+}
+
+model Period {
+  id         String         @id @default(cuid())
+  category   PeriodCategory @default(LOW)
+  start_date DateTime       @db.Date
+  end_date   DateTime       @db.Date
+  created_at DateTime       @default(now())
+  updated_at DateTime       @updatedAt
+
+  HotelPeriodPrices HotelPeriodPrice[]
+
+  @@map("period")
+}
+
+model HotelPeriodPrice {
+  id           String   @id @default(cuid())
+  hotel_id     String
+  period_id    String
+  price_double Decimal  @db.Decimal(10, 2)
+  price_triple Decimal  @db.Decimal(10, 2)
+  price_quad   Decimal  @db.Decimal(10, 2)
+  created_at   DateTime @default(now())
+  updated_at   DateTime @updatedAt
+
+  Hotel  Hotel  @relation(fields: [hotel_id], references: [id], onDelete: Cascade)
+  Period Period @relation(fields: [period_id], references: [id], onDelete: Cascade)
+
+  @@unique([hotel_id, period_id])
+  @@map("hotel_period_price")
 }
 
 enum Role {
@@ -295,8 +286,15 @@ enum Role {
   USER
 }
 
-enum ApplicationStatus {
-  PENDING
-  APPROVED
-  REJECTED
+enum City {
+  MEKKAH
+  MADINAH
+}
+
+enum PeriodCategory {
+  LOW
+  MID
+  HIGH
+  RAMADHAN
+  ITIKAF
 }

@@ -6,7 +6,6 @@ import { UserRequest } from '../type/user-request';
 export const authMiddleware = async (req: UserRequest, res: Response, next: NextFunction) => {
    const token = req.cookies.access_token;
 
-
    if (!token) {
       return res.status(401).json({
          success: false,

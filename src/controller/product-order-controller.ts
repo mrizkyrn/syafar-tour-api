@@ -15,7 +15,6 @@ export class ProductOrderController {
         data: response,
       });
     } catch (error) {
-      console.log(error);
       next(error);
     }
   }
