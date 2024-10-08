@@ -24,7 +24,8 @@ model User {
   created_at      DateTime @default(now())
   updated_at      DateTime @updatedAt
 
-  ProductOrders ProductOrder[]
+  ProductOrders     ProductOrder[]
+  MitraPackageOrder MitraPackageOrder[]
 
   @@map("user")
 }
@@ -216,7 +217,8 @@ model Vendor {
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
 
-  Hotels Hotel[]
+  Hotels        Hotel[]
+  MitraPackages MitraPackage[]
 
   @@map("vendor")
 }
@@ -230,8 +232,10 @@ model Hotel {
   created_at   DateTime @default(now())
   updated_at   DateTime @updatedAt
 
-  Vendor            Vendor             @relation(fields: [vendor_id], references: [id], onDelete: Cascade)
-  HotelPeriodPrices HotelPeriodPrice[]
+  Vendor               Vendor             @relation(fields: [vendor_id], references: [id], onDelete: Cascade)
+  HotelPeriodPrices    HotelPeriodPrice[]
+  MitraPackagesMekkah  MitraPackage[]     @relation("HotelMekkahRelation")
+  MitraPackagesMadinah MitraPackage[]     @relation("HotelMadinahRelation")
 
   @@map("hotel")
 }
@@ -245,6 +249,7 @@ model Period {
   updated_at DateTime       @updatedAt
 
   HotelPeriodPrices HotelPeriodPrice[]
+  MitraPackages     MitraPackage[]
 
   @@map("period")
 }
@@ -274,6 +279,8 @@ model Airline {
   created_at   DateTime @default(now())
   updated_at   DateTime @updatedAt
 
+  MitraPackages MitraPackage[]
+
   @@map("airline")
 }
 
@@ -285,16 +292,19 @@ model Visa {
   created_at   DateTime @default(now())
   updated_at   DateTime @updatedAt
 
+  MitraPackages MitraPackage[]
+
   @@map("visa")
 }
 
 model Transportation {
-  id           String   @id @default(cuid())
-  name         String   @db.VarChar(255)
-  price_idr    Decimal  @db.Decimal(12, 2)
+  id           String         @id @default(cuid())
+  name         String         @db.VarChar(255)
+  price_idr    Decimal        @db.Decimal(12, 2)
   order_number Int
-  created_at   DateTime @default(now())
-  updated_at   DateTime @updatedAt
+  created_at   DateTime       @default(now())
+  updated_at   DateTime       @updatedAt
+  MitraPackage MitraPackage[]
 
   @@map("transportation")
 }
@@ -307,6 +317,8 @@ model Muthawif {
   created_at   DateTime @default(now())
   updated_at   DateTime @updatedAt
 
+  MitraPackages MitraPackage[]
+
   @@map("muthawif")
 }
 
@@ -317,6 +329,8 @@ model HandlingSaudi {
   order_number Int
   created_at   DateTime @default(now())
   updated_at   DateTime @updatedAt
+
+  MitraPackages MitraPackage[]
 
   @@map("handling_saudi")
 }
@@ -329,6 +343,8 @@ model HandlingDomestic {
   created_at   DateTime @default(now())
   updated_at   DateTime @updatedAt
 
+  MitraPackages MitraPackage[]
+
   @@map("handling_domestic")
 }
 
@@ -339,6 +355,8 @@ model Siskopatuh {
   order_number Int
   created_at   DateTime @default(now())
   updated_at   DateTime @updatedAt
+
+  MitraPackages MitraPackage[]
 
   @@map("siskopatuh")
 }
@@ -351,6 +369,8 @@ model Equipment {
   created_at   DateTime @default(now())
   updated_at   DateTime @updatedAt
 
+  MitraPackages MitraPackage[]
+
   @@map("equipment")
 }
 
@@ -361,6 +381,8 @@ model TourPlus {
   order_number Int
   created_at   DateTime @default(now())
   updated_at   DateTime @updatedAt
+
+  MitraPackages MitraPackage[]
 
   @@map("tour_plus")
 }
@@ -373,7 +395,73 @@ model Manasik {
   created_at   DateTime @default(now())
   updated_at   DateTime @updatedAt
 
+  MitraPackages MitraPackage[]
+
   @@map("manasik")
+}
+
+model MitraPackage {
+  id                   String   @id @default(cuid())
+  period_id            String?
+  airline_id           String?
+  vendor_id            String?
+  hotel_mekkah_id      String?
+  hotel_madinah_id     String?
+  visa_id              String?
+  transportation_id    String?
+  muthawif_id          String?
+  handling_saudi_id    String?
+  handling_domestic_id String?
+  siskopatuh_id        String?
+  equipment_id         String?
+  tour_plus_id         String?
+  manasik_id           String?
+  number_of_pax        Int
+  departure_date       DateTime @db.Date
+  mekkah_room_type     String   @db.VarChar(255)
+  madinah_room_type    String   @db.VarChar(255)
+  travel_duration      Int
+  mekkah_duration      Int
+  madinah_duration     Int
+  tour_leader          Int
+  margin               Decimal  @db.Decimal(12, 2)
+  per_pax_price        Decimal  @db.Decimal(12, 2)
+  total_price          Decimal  @db.Decimal(12, 2)
+  created_at           DateTime @default(now())
+  updated_at           DateTime @updatedAt
+
+  MitraPackageOrders MitraPackageOrder[]
+
+  period           Period?           @relation(fields: [period_id], references: [id], onDelete: SetNull)
+  airline          Airline?          @relation(fields: [airline_id], references: [id], onDelete: SetNull)
+  vendor           Vendor?           @relation(fields: [vendor_id], references: [id], onDelete: SetNull)
+  hotelMekkah      Hotel?            @relation("HotelMekkahRelation", fields: [hotel_mekkah_id], references: [id], onDelete: SetNull)
+  hotelMadinah     Hotel?            @relation("HotelMadinahRelation", fields: [hotel_madinah_id], references: [id], onDelete: SetNull)
+  visa             Visa?             @relation(fields: [visa_id], references: [id], onDelete: SetNull)
+  transportation   Transportation?   @relation(fields: [transportation_id], references: [id], onDelete: SetNull)
+  muthawif         Muthawif?         @relation(fields: [muthawif_id], references: [id], onDelete: SetNull)
+  handlingSaudi    HandlingSaudi?    @relation(fields: [handling_saudi_id], references: [id], onDelete: SetNull)
+  handlingDomestic HandlingDomestic? @relation(fields: [handling_domestic_id], references: [id], onDelete: SetNull)
+  siskopatuh       Siskopatuh?       @relation(fields: [siskopatuh_id], references: [id], onDelete: SetNull)
+  equipment        Equipment?        @relation(fields: [equipment_id], references: [id], onDelete: SetNull)
+  tourPlus         TourPlus?         @relation(fields: [tour_plus_id], references: [id], onDelete: SetNull)
+  manasik          Manasik?          @relation(fields: [manasik_id], references: [id], onDelete: SetNull)
+
+  @@map("mitra_package")
+}
+
+model MitraPackageOrder {
+  id               String   @id @default(cuid())
+  user_id          String
+  mitra_package_id String
+  created_at       DateTime @default(now())
+  updated_at       DateTime @updatedAt
+
+  MitraPackage MitraPackage @relation(fields: [mitra_package_id], references: [id])
+
+  User User @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@map("mitra_package_order")
 }
 
 model ExchangeRate {

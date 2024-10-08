@@ -108,6 +108,9 @@ const hotels = [
       { name: 'SAFWAT AL MADINAH', city: 'MADINAH', prices: { double: 480, triple: 525, quad: 570 } },
       { name: 'GRAND PLAZA', city: 'MADINAH', prices: { double: 490, triple: 560, quad: 620 } },
       { name: 'FRONT TAIBA', city: 'MADINAH', prices: { double: 720, triple: 845, quad: 970 } },
+      { name: 'AL AQEEQ', city: 'MADINAH', prices: { double: 750, triple: 870, quad: 990 } },
+      { name: 'AL HARAM DAR ELIMAN', city: 'MADINAH', prices: { double: 830, triple: 955, quad: 1180 } },
+      { name: 'HILTON MADINAH', city: 'MADINAH', prices: { double: 1709, triple: 2210, quad: 2550 } },
     ],
   },
   {
@@ -123,6 +126,23 @@ const hotels = [
       { name: 'MILLENIUM HOTEL', city: 'MEKKAH', prices: { double: 320, triple: 380, quad: 440 } },
       { name: 'VOCO MAKKAH', city: 'MEKKAH', prices: { double: 330, triple: 385, quad: 440 } },
       { name: 'LE MERIDIEN TOWER', city: 'MEKKAH', prices: { double: 350, triple: 400, quad: 460 } },
+      { name: 'ZILAL AL NUZULA', city: 'MEKKAH', prices: { double: 360, triple: 405, quad: 450 } },
+      { name: 'AJYAD ALJIWAR', city: 'MEKKAH', prices: { double: 450, triple: 485, quad: 520 } },
+      { name: 'DANA ALTAJ', city: 'MEKKAH', prices: { double: 450, triple: 485, quad: 520 } },
+      { name: 'JAWAD ALTAJ', city: 'MEKKAH', prices: { double: 450, triple: 485, quad: 520 } },
+      { name: 'ELAF AJYAD', city: 'MEKKAH', prices: { double: 450, triple: 495, quad: 540 } },
+      { name: 'SNOOD AJYAD', city: 'MEKKAH', prices: { double: 460, triple: 500, quad: 540 } },
+      { name: 'FOUR POINT BY SHERATON', city: 'MEKKAH', prices: { double: 290, triple: 410, quad: 550 } },
+      { name: 'RAMADA DAR AL FAIZEEN', city: 'MEKKAH', prices: { double: 475, triple: 525, quad: 575 } },
+      { name: 'FAJR BADIE 2 (MAYSAN)', city: 'MEKKAH', prices: { double: 490, triple: 540, quad: 590 } },
+      { name: 'GRAND AL MASSA', city: 'MEKKAH', prices: { double: 545, triple: 595, quad: 645 } },
+      { name: 'MIRA AJYAD', city: 'MEKKAH', prices: { double: 530, triple: 590, quad: 650 } },
+      { name: 'AZKA AL SAFA', city: 'MEKKAH', prices: { double: 570, triple: 640, quad: 710 } },
+      { name: 'OLAYAN AL HARAM', city: 'MEKKAH', prices: { double: 530, triple: 645, quad: 730 } },
+      { name: 'AL SHOHADA', city: 'MEKKAH', prices: { double: 630, triple: 730, quad: 830 } },
+      { name: 'HILTON CONVENTION', city: 'MEKKAH', prices: { double: 890, triple: 1060, quad: 1230 } },
+      { name: 'PULLMAN ZAM ZAM', city: 'MEKKAH', prices: { double: 950, triple: 1175, quad: 1400 } },
+      { name: 'RAFFLES MAKKAH PALACE', city: 'MEKKAH', prices: { double: 1610, triple: 1760, quad: 2080 } },
       { name: 'DAR ELIMAN AL HARAM', city: 'MADINAH', prices: { double: 1000, triple: 1250, quad: 3000 } },
       { name: 'GOLDEN TULIP ZAHABI', city: 'MADINAH', prices: { double: 1065, triple: 1115, quad: 1180 } },
     ],
@@ -336,7 +356,7 @@ const exchangeRates = [
 ];
 
 const contact = [
-  { name: 'whatsapp', value: '083133344897' },
+  { name: 'whatsapp', value: '6283133344897' },
   { name: 'email', value: 'syafarmedia@gmail.com' },
 ];
 
