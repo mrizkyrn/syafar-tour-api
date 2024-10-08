@@ -4,7 +4,9 @@ import { upload } from '../middleware/multer-middleware';
 import { permit } from '../middleware/permit-middleware';
 import { AuthController } from '../controller/auth-controller';
 import { CategoryController } from '../controller/category-controller';
+import { ContactController } from '../controller/contact-controller';
 import { UserController } from '../controller/user-controller';
+import { ExchangeRateController } from '../controller/exchange-rate-controller';
 import { ProductController } from '../controller/product-controller';
 import { ProductOrderController } from '../controller/product-order-controller';
 import { UserPackageOptionController } from '../controller/user-package-option-controller';
@@ -92,14 +94,30 @@ authApi.post('/v1/mitra-packages/airlines/bulk', permit('ADMIN'), MitraPackageOp
 authApi.get('/v1/mitra-packages/airlines', permit('ADMIN'), MitraPackageOptionController.getAllAirlines);
 authApi.post('/v1/mitra-packages/visas/bulk', permit('ADMIN'), MitraPackageOptionController.bulkUpdateVisas);
 authApi.get('/v1/mitra-packages/visas', permit('ADMIN'), MitraPackageOptionController.getAllVisas);
-authApi.post('/v1/mitra-packages/transportations/bulk', permit('ADMIN'), MitraPackageOptionController.bulkUpdateTranportations);
+authApi.post(
+  '/v1/mitra-packages/transportations/bulk',
+  permit('ADMIN'),
+  MitraPackageOptionController.bulkUpdateTranportations
+);
 authApi.get('/v1/mitra-packages/transportations', permit('ADMIN'), MitraPackageOptionController.getAllTransportations);
 authApi.post('/v1/mitra-packages/muthawifs/bulk', permit('ADMIN'), MitraPackageOptionController.bulkUpdateMuthawifs);
 authApi.get('/v1/mitra-packages/muthawifs', permit('ADMIN'), MitraPackageOptionController.getAllMuthawifs);
-authApi.post('/v1/mitra-packages/handling-saudis/bulk', permit('ADMIN'), MitraPackageOptionController.bulkUpdateHandlingSaudis);
+authApi.post(
+  '/v1/mitra-packages/handling-saudis/bulk',
+  permit('ADMIN'),
+  MitraPackageOptionController.bulkUpdateHandlingSaudis
+);
 authApi.get('/v1/mitra-packages/handling-saudis', permit('ADMIN'), MitraPackageOptionController.getAllHandlingSaudis);
-authApi.post('/v1/mitra-packages/handling-domestics/bulk', permit('ADMIN'), MitraPackageOptionController.bulkUpdateHandlingDomestics);
-authApi.get('/v1/mitra-packages/handling-domestics', permit('ADMIN'), MitraPackageOptionController.getAllHandlingDomestics);
+authApi.post(
+  '/v1/mitra-packages/handling-domestics/bulk',
+  permit('ADMIN'),
+  MitraPackageOptionController.bulkUpdateHandlingDomestics
+);
+authApi.get(
+  '/v1/mitra-packages/handling-domestics',
+  permit('ADMIN'),
+  MitraPackageOptionController.getAllHandlingDomestics
+);
 authApi.post('/v1/mitra-packages/siskopatuh/bulk', permit('ADMIN'), MitraPackageOptionController.bulkUpdateSiskopatuh);
 authApi.get('/v1/mitra-packages/siskopatuh', permit('ADMIN'), MitraPackageOptionController.getAllSiskopatuh);
 authApi.post('/v1/mitra-packages/equipments/bulk', permit('ADMIN'), MitraPackageOptionController.bulkUpdateEquipments);
@@ -108,3 +126,13 @@ authApi.post('/v1/mitra-packages/tours/bulk', permit('ADMIN'), MitraPackageOptio
 authApi.get('/v1/mitra-packages/tours', permit('ADMIN'), MitraPackageOptionController.getAllTourPluses);
 authApi.post('/v1/mitra-packages/manasik/bulk', permit('ADMIN'), MitraPackageOptionController.bulkUpdateManasik);
 authApi.get('/v1/mitra-packages/manasik', permit('ADMIN'), MitraPackageOptionController.getAllManasik);
+
+// Exchange Rate
+authApi.post('/v1/exchange-rates', permit('ADMIN'), ExchangeRateController.create);
+authApi.put('/v1/exchange-rates/', permit('ADMIN'), ExchangeRateController.bulkUpdate);
+authApi.delete('/v1/exchange-rates/:id', permit('ADMIN'), ExchangeRateController.delete);
+
+// Contact
+authApi.post('/v1/contacts', permit('ADMIN'), ContactController.create);
+authApi.put('/v1/contacts', permit('ADMIN'), ContactController.bulkUpdate);
+authApi.delete('/v1/contacts/:id', permit('ADMIN'), ContactController.delete);

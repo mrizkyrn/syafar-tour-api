@@ -81,7 +81,7 @@ export class HotelService {
                 quad: hotel.price_quad,
               },
             });
-          // If the hotel exists, update the hotel
+            // If the hotel exists, update the hotel
           } else {
             // Update the hotel
             await prismaClient.hotel.update({
@@ -174,7 +174,23 @@ export class HotelService {
       },
     });
 
-    console.log(hotels);
+    return hotels.map(toHotelResponse);
+  }
+
+  static async getAllHotelPeriodPrices(): Promise<HotelResponse[]> {
+    const hotels = await prismaClient.hotel.findMany({
+      include: {
+        Vendor: true,
+        HotelPeriodPrices: {
+          include: {
+            Period: true,
+          },
+        },
+      },
+      orderBy: {
+        order_number: 'asc',
+      },
+    });
 
     return hotels.map(toHotelResponse);
   }
@@ -190,7 +206,6 @@ export class HotelService {
   }
 
   static async #createHotel(data: CreateHotelRequest): Promise<string> {
-    console.log(data);
     const hotel = await prismaClient.hotel.create({
       data: {
         vendor_id: data.vendor_id,

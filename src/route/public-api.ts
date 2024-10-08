@@ -1,11 +1,14 @@
 import express from 'express';
 import { AuthController } from '../controller/auth-controller';
 import { CategoryController } from '../controller/category-controller';
+import { ContactController } from '../controller/contact-controller';
+import { ExchangeRateController } from '../controller/exchange-rate-controller';
 import { PackageTypeController } from '../controller/package-type-controller';
 import { ProductController } from '../controller/product-controller';
 import { UserPackageController } from '../controller/user-package-controller';
 import { UserPackageOptionController } from '../controller/user-package-option-controller';
 import { UserPackageOrderController } from '../controller/user-package-order-controller';
+import { HotelController } from '../controller/hotel-controller';
 
 export const publicRouter = express.Router();
 
@@ -33,3 +36,14 @@ publicRouter.get('/v1/categories/:id', CategoryController.get);
 // Product
 publicRouter.get('/v1/products', ProductController.getAll);
 publicRouter.get('/v1/products/:id', ProductController.get);
+
+// Hotel
+publicRouter.get('/v1/hotels/prices', HotelController.getAllHotelPeriodPrices);
+
+// Exchange Rate
+publicRouter.get('/v1/exchange-rates', ExchangeRateController.getAll);
+publicRouter.get('/v1/exchange-rates/:id', ExchangeRateController.get);
+
+// Contact
+publicRouter.get('/v1/contacts', ContactController.getAll);
+publicRouter.get('/v1/contacts/:name', ContactController.getByName);

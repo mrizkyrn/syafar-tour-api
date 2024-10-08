@@ -376,6 +376,26 @@ model Manasik {
   @@map("manasik")
 }
 
+model ExchangeRate {
+  id         String   @id @default(cuid())
+  currency   String   @db.VarChar(255)
+  rate_idr   Decimal  @db.Decimal(12, 2)
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  @@map("exchange_rate")
+}
+
+model Contact {
+  id         String   @id @default(cuid())
+  name       String   @db.VarChar(255)
+  value      String   @db.VarChar(255)
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  @@map("contact")
+}
+
 enum Role {
   ADMIN
   MITRA

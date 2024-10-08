@@ -96,4 +96,18 @@ export class HotelController {
       next(error);
     }
   }
+
+  static async getAllHotelPeriodPrices(req: Request, res: Response, next: NextFunction) {
+    try {
+      const response = await HotelService.getAllHotelPeriodPrices();
+
+      res.status(200).json({
+        success: true,
+        message: 'Hotel period prices retrieved successfully',
+        data: response,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
 }

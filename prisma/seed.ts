@@ -330,6 +330,16 @@ const manasik = [
   { name: 'MANASIK HOTEL', price_idr: 250000 },
 ];
 
+const exchangeRates = [
+  { name: 'USD', rate_idr: 15000 },
+  { name: 'SAR', rate_idr: 4000 },
+];
+
+const contact = [
+  { name: 'whatsapp', value: '083133344897' },
+  { name: 'email', value: 'syafarmedia@gmail.com' },
+];
+
 async function createAdminUser() {
   const existingAdmin = await prisma.user.findFirst({
     where: { email: adminData.email },
@@ -710,6 +720,48 @@ async function seedManasik() {
   }
 }
 
+async function seedExchangeRates() {
+  for (const exchangeRate of exchangeRates) {
+    const existingExchangeRate = await prisma.exchangeRate.findFirst({
+      where: { currency: exchangeRate.name },
+    });
+
+    if (!existingExchangeRate) {
+      await prisma.exchangeRate.create({
+        data: {
+          currency: exchangeRate.name,
+          rate_idr: exchangeRate.rate_idr,
+        },
+      });
+
+      console.log(`Exchange Rate '${exchangeRate.name}' created`);
+    } else {
+      console.log(`Exchange Rate '${exchangeRate.name}' already exists`);
+    }
+  }
+}
+
+async function seedContact() {
+  for (const contactItem of contact) {
+    const existingContact = await prisma.contact.findFirst({
+      where: { name: contactItem.name },
+    });
+
+    if (!existingContact) {
+      await prisma.contact.create({
+        data: {
+          name: contactItem.name,
+          value: contactItem.value,
+        },
+      });
+
+      console.log(`Contact '${contactItem.name}' created`);
+    } else {
+      console.log(`Contact '${contactItem.name}' already exists`);
+    }
+  }
+}
+
 async function main() {
   try {
     console.log('Starting seeding process...');
@@ -729,6 +781,8 @@ async function main() {
     await seedEquipments();
     await seedTourPlus();
     await seedManasik();
+    await seedExchangeRates();
+    await seedContact();
     console.log('Seeding completed successfully.');
   } catch (error) {
     console.error('Error during seeding:', error);
