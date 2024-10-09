@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import { MitraPackageOrderService } from '../service/mitra-package-order-service';
-import { CreateMitraPackageOrderRequest } from '../model/mitra-package-order-service';
+import { CreateMitraPackageOrderRequest, MitraPackageOrderQueryParams } from '../model/mitra-package-order-service';
 import { UserRequest } from '../type/user-request';
 
 export class MitraPackageOrderController {
@@ -12,6 +12,27 @@ export class MitraPackageOrderController {
       res.status(201).json({
         success: true,
         message: 'Mitra package order created successfully',
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async getAll(req: Request, res: Response, next: NextFunction) {
+    try {
+      const query: MitraPackageOrderQueryParams = {
+        search: req.query.search as string,
+        sort: req.query.sort as string,
+        order: req.query.order as 'asc' | 'desc',
+        page: req.query.page ? Number(req.query.page as string) : 1,
+        limit: req.query.limit ? Number(req.query.limit as string) : 10,
+      }
+      const result = await MitraPackageOrderService.getAll(query);
+
+      res.status(200).json({
+        success: true,
+        message: 'Mitra package order list',
+        data: result,
       });
     } catch (error) {
       next(error);

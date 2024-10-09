@@ -153,3 +153,4 @@ authApi.get('/v1/mitra-packages/:id', permit('ADMIN', 'MITRA'), MitraPackageCont
 
 // Mitra Package Order
 authApi.post('/v1/mitra-package-orders', permit('ADMIN', 'MITRA'), MitraPackageOrderController.create);
+authApi.get('/v1/mitra-package-orders', permit('ADMIN'), MitraPackageOrderController.getAll);
