@@ -38,4 +38,47 @@ export class MitraPackageOrderController {
       next(error);
     }
   }
+
+  static async getAllByUser(req: UserRequest, res: Response, next: NextFunction) {
+    try {
+      const result = await MitraPackageOrderService.getAllByUser(req.user);
+
+      res.status(200).json({
+        success: true,
+        message: 'Mitra package order list',
+        data: result,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async get(req: UserRequest, res: Response, next: NextFunction) {
+    try {
+      const id = req.params.id;
+      const result = await MitraPackageOrderService.get(id);
+
+      res.status(200).json({
+        success: true,
+        message: 'Mitra package order retrieved successfully',
+        data: result,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async delete(req: Request, res: Response, next: NextFunction) {
+    try {
+      const id = req.params.id;
+      await MitraPackageOrderService.delete(id);
+
+      res.status(200).json({
+        success: true,
+        message: 'Mitra package order deleted successfully',
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
 }

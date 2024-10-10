@@ -49,7 +49,7 @@ export class MitraPackageOrderService {
     }
 
     const sortField = queryRequest.sort || 'created_at';
-    const sortOrder = queryRequest.order === 'desc' ? 'desc' : 'asc';
+    const sortOrder = queryRequest.order === 'asc' ? 'asc' : 'desc';
 
     const validSortFields = [
       'User.email',
@@ -98,5 +98,43 @@ export class MitraPackageOrderService {
         limit: queryRequest.limit,
       },
     };
+  }
+
+  static async getAllByUser(user: User): Promise<MitraPackageOrderResponse[]> {
+    const mitraPackageOrders = await prismaClient.mitraPackageOrder.findMany({
+      where: { user_id: user.id },
+      include: {
+        User: true,
+        MitraPackage: { select: { per_pax_price: true, total_price: true } },
+      },
+    });
+
+    return mitraPackageOrders.map((order) => toMitraPackageOrderResponse(order));
+  }
+
+  static async get(id: string): Promise<MitraPackageOrderResponse> {
+    const mitraPackageOrder = await prismaClient.mitraPackageOrder.findUnique({
+      where: { id },
+      include: {
+        User: true,
+        MitraPackage: { select: { per_pax_price: true, total_price: true } },
+      },
+    });
+
+    if (!mitraPackageOrder) {
+      throw new ResponseError(404, 'Mitra package order not found');
+    }
+
+    return toMitraPackageOrderResponse(mitraPackageOrder);
+  }
+
+  static async delete(id: string): Promise<void> {
+    const mitraPackageOrder = await prismaClient.mitraPackageOrder.findUnique({ where: { id } });
+
+    if (!mitraPackageOrder) {
+      throw new ResponseError(404, 'Mitra package order not found');
+    }
+
+    await prismaClient.mitraPackageOrder.delete({ where: { id } });
   }
 }

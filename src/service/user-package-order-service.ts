@@ -1,6 +1,4 @@
-import { User } from '@prisma/client';
 import { prismaClient } from '../application/database';
-import { logger } from '../application/logger';
 import { ResponseError } from '../error/response-error';
 import {
   UserPackageOrderResponse,
@@ -41,17 +39,19 @@ export class UserPackageOrderService {
 
   static async getAll(queryParams: UserPackageOrderQueryParams): Promise<Pageable<UserPackageOrderResponse>> {
     const queryRequest = Validation.validate(UserPackageOrderValidation.QUERY, queryParams);
-
+    console.log(queryRequest);
     const skip = (queryRequest.page - 1) * queryRequest.limit;
     const filter = queryRequest.search
       ? {
           OR: [
-            { full_name: { contains: queryRequest.search, mode: 'insensitive' } },
-            { email: { contains: queryRequest.search, mode: 'insensitive' } },
-            { whatsapp_number: { contains: queryRequest.search, mode: 'insensitive' } },
+            { full_name: { contains: queryRequest.search } },
+            { email: { contains: queryRequest.search } },
+            { whatsapp_number: { contains: queryRequest.search } },
           ],
         }
       : {};
+
+    console.log(filter);
 
     const userPackageOrders = await prismaClient.userPackageOrder.findMany({
       include: {
@@ -73,6 +73,8 @@ export class UserPackageOrderService {
       skip,
       take: queryRequest.limit,
     });
+
+    console.log(userPackageOrders);
 
     if (!userPackageOrders) {
       throw new ResponseError(404, 'User package orders tidak ditemukan');

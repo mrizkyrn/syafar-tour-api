@@ -9,4 +9,12 @@ export class OrderValidation {
     per_pax_price: z.number().positive(),
     total_price: z.number().positive(),
   });
+
+  static readonly QUERY: ZodType = z.object({
+    search: z.string().optional(),
+    sort: z.string().optional(),
+    order: z.string().optional(),
+    page: z.number().int().min(1).default(1),
+    limit: z.number().int().min(1).max(100).default(10),
+  });
 }

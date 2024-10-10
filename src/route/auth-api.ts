@@ -64,10 +64,11 @@ authApi.patch(
 );
 authApi.delete('/v1/products/:id', permit('ADMIN'), ProductController.delete);
 
-// Order
+// Product Order
 authApi.get('/v1/product-orders', permit('ADMIN'), ProductOrderController.getAll);
 authApi.delete('/v1/product-orders/:id', permit('ADMIN'), ProductOrderController.delete);
 authApi.post('/v1/product-orders', ProductOrderController.create);
+authApi.get('/v1/product-orders/user', ProductOrderController.getAllByUser);
 
 // Vendor
 authApi.post('/v1/vendors', permit('ADMIN'), VendorController.create);
@@ -154,3 +155,5 @@ authApi.get('/v1/mitra-packages/:id', permit('ADMIN', 'MITRA'), MitraPackageCont
 // Mitra Package Order
 authApi.post('/v1/mitra-package-orders', permit('ADMIN', 'MITRA'), MitraPackageOrderController.create);
 authApi.get('/v1/mitra-package-orders', permit('ADMIN'), MitraPackageOrderController.getAll);
+authApi.get('/v1/mitra-package-orders/user', permit('ADMIN', 'MITRA'), MitraPackageOrderController.getAllByUser);
+authApi.delete('/v1/mitra-package-orders/:id', permit('ADMIN'), MitraPackageOrderController.delete);
